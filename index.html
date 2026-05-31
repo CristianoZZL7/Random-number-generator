@@ -94,6 +94,15 @@
       gap: 10px;
     }
 
+    .language-select {
+      width: auto;
+      min-width: 118px;
+      min-height: 34px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     h1 {
       margin: 0 0 8px;
       font-size: clamp(28px, 4vw, 42px);
@@ -838,6 +847,10 @@
         <p class="lead">生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和科研导出格式。</p>
       </div>
       <div class="header-actions">
+        <select class="language-select" id="languageSelect" aria-label="语言 / Language">
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
         <button class="btn btn-secondary btn-small" id="themeToggle" type="button" aria-pressed="false"><svg class="icon icon-sm" aria-hidden="true"><use id="themeIcon" href="#icon-moon"></use></svg><span id="themeToggleText">深色模式</span></button>
         <div class="status-pill" id="statusPill">等待生成</div>
       </div>
@@ -1041,7 +1054,8 @@ B组</textarea>
       originalResults: [],
       lastConfig: null,
       metadata: null,
-      history: []
+      history: [],
+      language: "zh"
     };
 
     const els = {
@@ -1058,6 +1072,7 @@ B组</textarea>
       csvFormat: document.getElementById("csvFormat"),
       numberSettings: document.getElementById("numberSettings"),
       groupSettings: document.getElementById("groupSettings"),
+      language: document.getElementById("languageSelect"),
       feedback: document.getElementById("feedback"),
       statusPill: document.getElementById("statusPill"),
       resultSubtitle: document.getElementById("resultSubtitle"),
@@ -1096,6 +1111,222 @@ B组</textarea>
       "unit-decimal": { min: 0, max: 1, count: 10, type: "decimal", decimals: 2, mode: "range" }
     };
 
+    const uiText = {
+      zh: {
+        appTitle: "随机数生成器",
+        lead: "生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和科研导出格式。",
+        darkMode: "深色模式",
+        lightMode: "浅色模式",
+        waiting: "等待生成",
+        conditions: "生成条件",
+        inclusive: "范围包含边界",
+        presets: "常用预设",
+        presetSmall: "1-10 整数",
+        presetPercent: "1-100 整数",
+        presetDecimal: "0-1 小数",
+        generationMode: "生成模式",
+        rangeMode: "普通范围",
+        referenceMode: "参考数平衡",
+        groupMode: "随机分组",
+        minValue: "最小值",
+        maxValue: "最大值",
+        count: "生成数量",
+        decimals: "小数位数",
+        numberType: "数字类型",
+        integer: "整数",
+        decimal: "小数",
+        reference: "参考数",
+        referenceHint: "尽量平衡参考数上下两侧数量，不做靠近参考数的偏置。",
+        uniqueOnly: "不允许重复结果",
+        sampleCount: "样本数量",
+        groupMethod: "分配方式",
+        balanced: "均衡分配",
+        random: "完全随机",
+        groupNames: "分组名称",
+        groupHint: "每行一个组名。均衡分配会尽量让每组样本数接近。",
+        seed: "随机种子 Seed",
+        seedPlaceholder: "留空则每次随机；填写后可复现",
+        seedHint: "同样的条件和 Seed 会得到同样的结果，适合论文记录和实验复现。",
+        csvFormat: "CSV 导出格式",
+        csvIndexed: "编号 + 结果",
+        csvSingle: "仅结果一列",
+        csvMetadata: "参数元数据 + 结果",
+        generate: "生成",
+        regenerate: "重新生成",
+        reset: "重置",
+        results: "生成结果",
+        resultHint: "设置条件后点击生成。",
+        original: "原始顺序",
+        asc: "升序",
+        desc: "降序",
+        dedupe: "一键去重",
+        summaryCount: "数量",
+        summaryMin: "最小值",
+        summaryMax: "最大值",
+        summaryMean: "均值",
+        summaryMedian: "中位数",
+        summaryStd: "标准差",
+        summaryQuartiles: "四分位 Q1 / Q3",
+        summaryMode: "模式",
+        metaTime: "生成时间",
+        metaSeed: "随机种子",
+        metaConfig: "参数",
+        history: "历史记录",
+        historyLimit: "最多保留最近 10 次",
+        clearHistory: "清除历史记录",
+        emptyHistory: "还没有历史记录。生成结果后会自动保存。",
+        copyAll: "复制全部",
+        exportTxt: "导出 TXT",
+        exportCsv: "导出 CSV",
+        noResultsTitle: "暂无结果",
+        noResultsText: "生成后会显示随机数、分组结果、统计摘要和参数元数据。",
+        footer: "说明：留空 Seed 时使用浏览器 Math.random()；填写 Seed 时使用确定性伪随机算法，方便复现，不用于密码学安全场景。",
+        copyOne: "复制",
+        view: "查看",
+        unset: "未设置",
+        itemUnit: "项",
+        restored: "已恢复",
+        generatedStatus: "已生成",
+        adjusted: "条件需要调整",
+        appliedPreset: "已应用预设，可以直接生成。",
+        generatedOk: "已生成结果。",
+        deduped: "已对当前结果去重。",
+        copiedAll: "已复制全部结果。",
+        copiedOne: "已复制单个结果。",
+        restoredHistory: "已恢复历史记录。",
+        clearedHistory: "已清除历史记录。",
+        exported: "已导出 {type} 文件。",
+        textInteger: "整数",
+        textDecimal: "{n} 位小数",
+        configRange: "{type}，范围 {min} 到 {max}{reference}{unique}",
+        configGroup: "{count} 个样本，{groups} 组，{method}",
+        referenceConfig: "，参考数 {reference}",
+        uniqueConfig: "，不重复",
+        tab: "生成后会自动保存。",
+        errSampleCount: "样本数量必须是正整数。",
+        errGroups: "随机分组至少需要两个组名。",
+        errRangeNumbers: "请输入有效的最小值和最大值。",
+        errMinMax: "最小值不能大于最大值。",
+        errCount: "生成数量必须是正整数。",
+        errDecimals: "小数位数必须是 0 到 10 之间的整数。",
+        errReferenceNumber: "请输入有效的参考数。",
+        errReferenceRange: "参考数必须在最小值和最大值之间。",
+        errNoInteger: "当前范围内没有可生成的整数。",
+        errUniqueInteger: "不允许重复时，当前整数范围内可用数字不足。",
+        errUniqueDecimal: "不允许重复时，当前小数位数下可用数字不足。",
+        errUniqueIntShort: "不允许重复时，可用整数数量不足。",
+        errNoDecimal: "当前范围和小数位数下没有可生成的小数。",
+        errUniqueDecimalShort: "不允许重复时，可用小数数量不足。",
+        errReferenceUnique: "参考数模式下，不允许重复时可用数字数量不足。"
+      },
+      en: {
+        appTitle: "Random Number Generator",
+        lead: "Generate integers, decimals, or randomized groups with reproducible seeds, metadata, summary statistics, and research-friendly exports.",
+        darkMode: "Dark mode",
+        lightMode: "Light mode",
+        waiting: "Ready",
+        conditions: "Generation Settings",
+        inclusive: "Range includes both endpoints",
+        presets: "Presets",
+        presetSmall: "1-10 integers",
+        presetPercent: "1-100 integers",
+        presetDecimal: "0-1 decimals",
+        generationMode: "Generation Mode",
+        rangeMode: "Range",
+        referenceMode: "Balanced by Reference",
+        groupMode: "Random Groups",
+        minValue: "Minimum",
+        maxValue: "Maximum",
+        count: "Quantity",
+        decimals: "Decimal places",
+        numberType: "Number Type",
+        integer: "Integer",
+        decimal: "Decimal",
+        reference: "Reference number",
+        referenceHint: "Balances counts above and below the reference without biasing values toward it.",
+        uniqueOnly: "Do not allow duplicates",
+        sampleCount: "Sample count",
+        groupMethod: "Assignment method",
+        balanced: "Balanced assignment",
+        random: "Fully random",
+        groupNames: "Group names",
+        groupHint: "Enter one group name per line. Balanced assignment keeps group sizes as close as possible.",
+        seed: "Random Seed",
+        seedPlaceholder: "Leave blank for new random results; fill in to reproduce",
+        seedHint: "The same settings and seed produce the same result, useful for records and reproducibility.",
+        csvFormat: "CSV Export Format",
+        csvIndexed: "Index + value",
+        csvSingle: "Value only",
+        csvMetadata: "Metadata + results",
+        generate: "Generate",
+        regenerate: "Regenerate",
+        reset: "Reset",
+        results: "Results",
+        resultHint: "Set the conditions, then click Generate.",
+        original: "Original order",
+        asc: "Ascending",
+        desc: "Descending",
+        dedupe: "Deduplicate",
+        summaryCount: "Count",
+        summaryMin: "Minimum",
+        summaryMax: "Maximum",
+        summaryMean: "Mean",
+        summaryMedian: "Median",
+        summaryStd: "Standard deviation",
+        summaryQuartiles: "Quartiles Q1 / Q3",
+        summaryMode: "Mode",
+        metaTime: "Generated at",
+        metaSeed: "Seed",
+        metaConfig: "Settings",
+        history: "History",
+        historyLimit: "Keeps the latest 10 runs",
+        clearHistory: "Clear history",
+        emptyHistory: "No history yet. Successful generations are saved automatically.",
+        copyAll: "Copy all",
+        exportTxt: "Export TXT",
+        exportCsv: "Export CSV",
+        noResultsTitle: "No results yet",
+        noResultsText: "Generated numbers, group assignments, summary statistics, and metadata will appear here.",
+        footer: "Note: blank Seed uses browser Math.random(); filled Seed uses a deterministic pseudo-random algorithm for reproducibility, not cryptographic security.",
+        copyOne: "Copy",
+        view: "View",
+        unset: "Not set",
+        itemUnit: "items",
+        restored: "Restored",
+        generatedStatus: "Generated",
+        adjusted: "Adjust settings",
+        appliedPreset: "Preset applied. You can generate now.",
+        generatedOk: "Results generated.",
+        deduped: "Current results deduplicated.",
+        copiedAll: "All results copied.",
+        copiedOne: "Single result copied.",
+        restoredHistory: "History entry restored.",
+        clearedHistory: "History cleared.",
+        exported: "{type} file exported.",
+        textInteger: "integer",
+        textDecimal: "{n} decimal places",
+        configRange: "{type}, range {min} to {max}{reference}{unique}",
+        configGroup: "{count} samples, {groups} groups, {method}",
+        referenceConfig: ", reference {reference}",
+        uniqueConfig: ", no duplicates",
+        errSampleCount: "Sample count must be a positive integer.",
+        errGroups: "Random grouping requires at least two group names.",
+        errRangeNumbers: "Please enter valid minimum and maximum values.",
+        errMinMax: "Minimum cannot be greater than maximum.",
+        errCount: "Quantity must be a positive integer.",
+        errDecimals: "Decimal places must be an integer from 0 to 10.",
+        errReferenceNumber: "Please enter a valid reference number.",
+        errReferenceRange: "Reference number must be within the range.",
+        errNoInteger: "There are no valid integers in the current range.",
+        errUniqueInteger: "Not enough unique integers are available in the current range.",
+        errUniqueDecimal: "Not enough unique decimals are available with the current decimal places.",
+        errUniqueIntShort: "Not enough unique integers are available.",
+        errNoDecimal: "There are no valid decimals with the current range and decimal places.",
+        errUniqueDecimalShort: "Not enough unique decimals are available.",
+        errReferenceUnique: "Not enough unique values are available in reference-balanced mode."
+      }
+    };
+
     document.querySelectorAll("[data-number-type]").forEach((button) => {
       button.addEventListener("click", () => setNumberType(button.dataset.numberType));
     });
@@ -1118,6 +1349,126 @@ B组</textarea>
     els.exportCsv.addEventListener("click", () => exportFile("csv"));
     els.themeToggle.addEventListener("click", toggleTheme);
     els.clearHistory.addEventListener("click", clearHistory);
+    els.language.addEventListener("change", () => setLanguage(els.language.value));
+
+    function text(key, values = {}) {
+      const source = uiText[state.language] || uiText.zh;
+      let value = source[key] || uiText.zh[key] || key;
+      Object.entries(values).forEach(([name, replacement]) => {
+        value = value.replaceAll(`{${name}}`, replacement);
+      });
+      return value;
+    }
+
+    function setNodeText(selector, value) {
+      const node = typeof selector === "string" ? document.querySelector(selector) : selector;
+      if (node) node.textContent = value;
+    }
+
+    function setButtonLabel(button, value) {
+      if (!button) return;
+      const icon = button.querySelector("svg");
+      button.textContent = "";
+      if (icon) button.appendChild(icon);
+      button.appendChild(document.createTextNode(value));
+    }
+
+    function setOptionText(selector, value) {
+      const option = document.querySelector(selector);
+      if (option) option.textContent = value;
+    }
+
+    function setLanguage(language) {
+      state.language = language === "en" ? "en" : "zh";
+      els.language.value = state.language;
+      document.documentElement.lang = state.language === "en" ? "en" : "zh-CN";
+      document.title = text("appTitle");
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      setNodeText(".brand-title span", text("appTitle"));
+      setNodeText(".lead", text("lead"));
+      setNodeText("#formTitle", text("conditions"));
+      setNodeText("#formTitle + .hint", text("inclusive"));
+      setNodeText(document.querySelector(".preset-grid")?.closest(".field")?.querySelector("label"), text("presets"));
+      setNodeText('button[data-preset="small-int"]', text("presetSmall"));
+      setNodeText('button[data-preset="percent-int"]', text("presetPercent"));
+      setNodeText('button[data-preset="unit-decimal"]', text("presetDecimal"));
+      setNodeText("#formTitle", text("conditions"));
+      setNodeText(document.querySelectorAll(".section-title h2")[1], text("generationMode"));
+      setNodeText('button[data-mode="range"]', text("rangeMode"));
+      setNodeText('button[data-mode="reference"]', text("referenceMode"));
+      setNodeText('button[data-mode="group"]', text("groupMode"));
+      setNodeText('label[for="minValue"]', text("minValue"));
+      setNodeText('label[for="maxValue"]', text("maxValue"));
+      setNodeText('label[for="countValue"]', text("count"));
+      setNodeText('label[for="decimalPlaces"]', text("decimals"));
+      setNodeText(document.querySelectorAll(".section-title h2")[2], text("numberType"));
+      setNodeText('button[data-number-type="integer"]', text("integer"));
+      setNodeText('button[data-number-type="decimal"]', text("decimal"));
+      setNodeText('label[for="referenceValue"]', text("reference"));
+      setNodeText("#referenceField .hint", text("referenceHint"));
+      setNodeText('label[for="uniqueOnly"] span', text("uniqueOnly"));
+      setNodeText('label[for="sampleCount"]', text("sampleCount"));
+      setNodeText('label[for="groupMethod"]', text("groupMethod"));
+      setOptionText('#groupMethod option[value="balanced"]', text("balanced"));
+      setOptionText('#groupMethod option[value="random"]', text("random"));
+      setNodeText('label[for="groupNames"]', text("groupNames"));
+      setNodeText("#groupSettings .hint", text("groupHint"));
+      setNodeText('label[for="seedValue"]', text("seed"));
+      els.seed.placeholder = text("seedPlaceholder");
+      setNodeText('label[for="seedValue"] + input + .hint', text("seedHint"));
+      setNodeText('label[for="csvFormat"]', text("csvFormat"));
+      setOptionText('#csvFormat option[value="indexed"]', text("csvIndexed"));
+      setOptionText('#csvFormat option[value="single"]', text("csvSingle"));
+      setOptionText('#csvFormat option[value="metadata"]', text("csvMetadata"));
+      setButtonLabel(els.generate, text("generate"));
+      setButtonLabel(els.regenerate, text("regenerate"));
+      setButtonLabel(els.reset, text("reset"));
+      setNodeText("#resultTitle", text("results"));
+      if (!state.lastConfig) els.resultSubtitle.textContent = text("resultHint");
+      setOptionText('#sortSelect option[value="original"]', text("original"));
+      setOptionText('#sortSelect option[value="asc"]', text("asc"));
+      setOptionText('#sortSelect option[value="desc"]', text("desc"));
+      setButtonLabel(els.dedupe, text("dedupe"));
+      setSummaryLabel(els.summaryCount, text("summaryCount"));
+      setSummaryLabel(els.summaryMin, text("summaryMin"));
+      setSummaryLabel(els.summaryMax, text("summaryMax"));
+      setSummaryLabel(els.summaryMean, text("summaryMean"));
+      setSummaryLabel(els.summaryMedian, text("summaryMedian"));
+      setSummaryLabel(els.summaryStd, text("summaryStd"));
+      setSummaryLabel(els.summaryQuartiles, text("summaryQuartiles"));
+      setSummaryLabel(els.summaryMode, text("summaryMode"));
+      setSummaryLabel(els.metaTime, text("metaTime"));
+      setSummaryLabel(els.metaSeed, text("metaSeed"));
+      setSummaryLabel(els.metaConfig, text("metaConfig"));
+      setButtonLabel(document.querySelector(".history-head strong"), text("history"));
+      setNodeText(".history-actions .hint", text("historyLimit"));
+      setButtonLabel(els.clearHistory, text("clearHistory"));
+      setButtonLabel(els.copyAll, text("copyAll"));
+      setButtonLabel(els.exportTxt, text("exportTxt"));
+      setButtonLabel(els.exportCsv, text("exportCsv"));
+      setNodeText(".empty-state strong", text("noResultsTitle"));
+      setNodeText(".empty-state span", text("noResultsText"));
+      setNodeText(".footer-note", text("footer"));
+      setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+      if (state.lastConfig) {
+        state.metadata = buildMetadata(state.lastConfig);
+        renderResults();
+        els.statusPill.textContent = `${text("generatedStatus")} ${state.results.length} ${text("itemUnit")}`;
+      } else {
+        updateSummary();
+        updateMetadata();
+        renderHistory();
+        els.statusPill.textContent = text("waiting");
+      }
+    }
+
+    function setSummaryLabel(valueNode, label) {
+      const labelNode = valueNode && valueNode.parentElement ? valueNode.parentElement.querySelector("span") : null;
+      if (labelNode) labelNode.textContent = label;
+    }
 
     function toggleTheme() {
       const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
@@ -1127,12 +1478,12 @@ B组</textarea>
     function setTheme(theme) {
       if (theme === "dark") {
         document.documentElement.dataset.theme = "dark";
-        els.themeToggleText.textContent = "浅色模式";
+        els.themeToggleText.textContent = text("lightMode");
         els.themeIcon.setAttribute("href", "#icon-sun");
         els.themeToggle.setAttribute("aria-pressed", "true");
       } else {
         document.documentElement.dataset.theme = "light";
-        els.themeToggleText.textContent = "深色模式";
+        els.themeToggleText.textContent = text("darkMode");
         els.themeIcon.setAttribute("href", "#icon-moon");
         els.themeToggle.setAttribute("aria-pressed", "false");
       }
@@ -1172,7 +1523,7 @@ B组</textarea>
       els.decimals.value = preset.decimals;
       setNumberType(preset.type);
       setMode(preset.mode);
-      setFeedback("已应用预设，可以直接生成。", "success");
+      setFeedback(text("appliedPreset"), "success");
     }
 
     function readConfig() {
@@ -1181,10 +1532,10 @@ B组</textarea>
         const sampleCount = Number(els.sampleCount.value);
         const groups = els.groupNames.value.split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
         if (!Number.isInteger(sampleCount) || sampleCount <= 0) {
-          throw new Error("样本数量必须是正整数。");
+          throw new Error(text("errSampleCount"));
         }
         if (groups.length < 2) {
-          throw new Error("随机分组至少需要两个组名。");
+          throw new Error(text("errGroups"));
         }
         return {
           mode: "group",
@@ -1203,23 +1554,23 @@ B组</textarea>
       const reference = Number(els.reference.value);
 
       if (!Number.isFinite(min) || !Number.isFinite(max)) {
-        throw new Error("请输入有效的最小值和最大值。");
+        throw new Error(text("errRangeNumbers"));
       }
       if (min > max) {
-        throw new Error("最小值不能大于最大值。");
+        throw new Error(text("errMinMax"));
       }
       if (!Number.isInteger(count) || count <= 0) {
-        throw new Error("生成数量必须是正整数。");
+        throw new Error(text("errCount"));
       }
       if (!Number.isInteger(decimals) || decimals < 0 || decimals > 10) {
-        throw new Error("小数位数必须是 0 到 10 之间的整数。");
+        throw new Error(text("errDecimals"));
       }
       if (state.mode === "reference") {
         if (!Number.isFinite(reference)) {
-          throw new Error("请输入有效的参考数。");
+          throw new Error(text("errReferenceNumber"));
         }
         if (reference < min || reference > max) {
-          throw new Error("参考数必须在最小值和最大值之间。");
+          throw new Error(text("errReferenceRange"));
         }
       }
 
@@ -1244,10 +1595,10 @@ B组</textarea>
         const minInt = Math.ceil(config.min);
         const maxInt = Math.floor(config.max);
         if (minInt > maxInt) {
-          throw new Error("当前范围内没有可生成的整数。");
+          throw new Error(text("errNoInteger"));
         }
         if (config.unique && config.count > maxInt - minInt + 1) {
-          throw new Error("不允许重复时，当前整数范围内可用数字不足。");
+          throw new Error(text("errUniqueInteger"));
         }
       }
 
@@ -1256,7 +1607,7 @@ B组</textarea>
         const minScaled = Math.ceil(config.min * scale);
         const maxScaled = Math.floor(config.max * scale);
         if (minScaled > maxScaled || config.count > maxScaled - minScaled + 1) {
-          throw new Error("不允许重复时，当前小数位数下可用数字不足。");
+          throw new Error(text("errUniqueDecimal"));
         }
       }
     }
@@ -1278,12 +1629,12 @@ B组</textarea>
         pushHistory();
         els.sort.value = "original";
         renderResults();
-        setFeedback("已生成结果。", "success");
-        els.statusPill.textContent = `已生成 ${generated.length} 项`;
+        setFeedback(text("generatedOk"), "success");
+        els.statusPill.textContent = `${text("generatedStatus")} ${generated.length} ${text("itemUnit")}`;
         els.regenerate.disabled = false;
       } catch (error) {
         setFeedback(error.message, "error");
-        els.statusPill.textContent = "条件需要调整";
+        els.statusPill.textContent = text("adjusted");
       }
     }
 
@@ -1297,7 +1648,7 @@ B组</textarea>
       const minInt = Math.ceil(min);
       const maxInt = Math.floor(max);
       if (minInt > maxInt && count > 0) {
-        throw new Error("当前范围内没有可生成的整数。");
+        throw new Error(text("errNoInteger"));
       }
       if (config.unique) {
         const pool = [];
@@ -1305,7 +1656,7 @@ B组</textarea>
           if (!exclude.has(String(value))) pool.push(value);
         }
         if (pool.length < count) {
-          throw new Error("不允许重复时，可用整数数量不足。");
+          throw new Error(text("errUniqueIntShort"));
         }
         shuffle(pool, config.random);
         return pool.slice(0, count);
@@ -1318,7 +1669,7 @@ B组</textarea>
       const minScaled = Math.ceil(min * scale);
       const maxScaled = Math.floor(max * scale);
       if (minScaled > maxScaled && count > 0) {
-        throw new Error("当前范围和小数位数下没有可生成的小数。");
+        throw new Error(text("errNoDecimal"));
       }
       if (config.unique) {
         const pool = [];
@@ -1327,7 +1678,7 @@ B组</textarea>
           if (!exclude.has(normalized)) pool.push(value / scale);
         }
         if (pool.length < count) {
-          throw new Error("不允许重复时，可用小数数量不足。");
+          throw new Error(text("errUniqueDecimalShort"));
         }
         shuffle(pool, config.random);
         return pool.slice(0, count).map((value) => Number(formatNumber(value, config)));
@@ -1383,7 +1734,7 @@ B组</textarea>
         remaining -= 1;
       }
       if (remaining > 0) {
-        throw new Error("参考数模式下，不允许重复时可用数字数量不足。");
+        throw new Error(text("errReferenceUnique"));
       }
       return { lower, upper, equal };
     }
@@ -1513,12 +1864,12 @@ B组</textarea>
       state.originalResults = state.results.slice();
       els.sort.value = "original";
       renderResults();
-      setFeedback("已对当前结果去重。", "success");
+      setFeedback(text("deduped"), "success");
     }
 
     async function copyAllResults() {
       await copyText(resultLines().join("\n"));
-      setFeedback("已复制全部结果。", "success");
+      setFeedback(text("copiedAll"), "success");
     }
 
     async function copyText(text) {
@@ -1547,7 +1898,7 @@ B组</textarea>
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      setFeedback(`已导出 ${type.toUpperCase()} 文件。`, "success");
+      setFeedback(text("exported", { type: type.toUpperCase() }), "success");
     }
 
     function txtContent() {
@@ -1578,10 +1929,10 @@ B组</textarea>
     function metadataLines() {
       if (!state.metadata) return [];
       return [
-        `生成时间: ${state.metadata.time}`,
-        `模式: ${state.metadata.mode}`,
-        `随机种子: ${state.metadata.seed || "未设置"}`,
-        `参数: ${state.metadata.configText}`
+        `${text("metaTime")}: ${state.metadata.time}`,
+        `${text("summaryMode")}: ${state.metadata.mode}`,
+        `${text("metaSeed")}: ${state.metadata.seed || text("unset")}`,
+        `${text("metaConfig")}: ${state.metadata.configText}`
       ];
     }
 
@@ -1591,7 +1942,7 @@ B组</textarea>
         "metadata_key,metadata_value",
         `time,${csvEscape(state.metadata.time)}`,
         `mode,${csvEscape(state.metadata.mode)}`,
-        `seed,${csvEscape(state.metadata.seed || "未设置")}`,
+        `seed,${csvEscape(state.metadata.seed || text("unset"))}`,
         `config,${csvEscape(state.metadata.configText)}`
       ];
     }
@@ -1626,11 +1977,11 @@ B组</textarea>
         const copyButton = document.createElement("button");
         copyButton.className = "copy-one";
         copyButton.type = "button";
-        copyButton.title = "复制这个结果";
-        copyButton.textContent = "复制";
+        copyButton.title = text("copyOne");
+        copyButton.textContent = text("copyOne");
         copyButton.addEventListener("click", async () => {
           await copyText(state.lastConfig.mode === "group" ? `${sampleLabel(value.id)}\t${value.group}` : formatNumber(value));
-          setFeedback("已复制单个结果。", "success");
+          setFeedback(text("copiedOne"), "success");
         });
 
         item.append(valueEl, copyButton);
@@ -1665,8 +2016,8 @@ B组</textarea>
       state.metadata = { ...snapshot.metadata };
       els.sort.value = "original";
       renderResults();
-      setFeedback("已恢复历史记录。", "success");
-      els.statusPill.textContent = `已恢复 ${state.results.length} 项`;
+      setFeedback(text("restoredHistory"), "success");
+      els.statusPill.textContent = `${text("restored")} ${state.results.length} ${text("itemUnit")}`;
       els.regenerate.disabled = false;
     }
 
@@ -1674,7 +2025,7 @@ B组</textarea>
       if (!state.history.length) return;
       state.history = [];
       renderHistory();
-      setFeedback("已清除历史记录。", "success");
+      setFeedback(text("clearedHistory"), "success");
     }
 
     function renderHistory() {
@@ -1683,7 +2034,7 @@ B组</textarea>
       if (!state.history.length) {
         const empty = document.createElement("div");
         empty.className = "history-empty";
-        empty.textContent = "还没有历史记录。生成结果后会自动保存。";
+        empty.textContent = text("emptyHistory");
         els.historyList.appendChild(empty);
         return;
       }
@@ -1695,16 +2046,16 @@ B组</textarea>
         const text = document.createElement("div");
         const title = document.createElement("span");
         title.className = "history-title";
-        title.textContent = `${entry.metadata.mode} · ${entry.results.length} 项`;
+        title.textContent = `${modeName(entry.lastConfig)} · ${entry.results.length} ${text("itemUnit")}`;
         const meta = document.createElement("span");
         meta.className = "history-meta";
-        meta.textContent = `${entry.metadata.time} · Seed: ${entry.metadata.seed || "未设置"}`;
+        meta.textContent = `${entry.metadata.time} · Seed: ${entry.metadata.seed || text("unset")}`;
         text.append(title, meta);
 
         const button = document.createElement("button");
         button.className = "btn btn-secondary btn-small";
         button.type = "button";
-        button.innerHTML = '<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg>查看';
+        button.innerHTML = `<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg>${text("view")}`;
         button.addEventListener("click", () => restoreHistory(index));
 
         item.append(text, button);
@@ -1747,7 +2098,7 @@ B组</textarea>
         return;
       }
       els.metaTime.textContent = state.metadata.time;
-      els.metaSeed.textContent = state.metadata.seed || "未设置";
+      els.metaSeed.textContent = state.metadata.seed || text("unset");
       els.metaConfig.textContent = state.metadata.configText;
     }
 
@@ -1803,15 +2154,25 @@ B组</textarea>
         mode: modeName(config),
         seed: config.seed,
         configText: config.mode === "group"
-          ? `${config.sampleCount} 个样本，${config.groups.length} 组，${config.groupMethod === "balanced" ? "均衡分配" : "完全随机"}`
-          : `${config.numberType === "integer" ? "整数" : `${config.decimals} 位小数`}，范围 ${config.min} 到 ${config.max}${config.mode === "reference" ? `，参考数 ${config.reference}` : ""}${config.unique ? "，不重复" : ""}`
+          ? text("configGroup", {
+              count: config.sampleCount,
+              groups: config.groups.length,
+              method: config.groupMethod === "balanced" ? text("balanced") : text("random")
+            })
+          : text("configRange", {
+              type: config.numberType === "integer" ? text("textInteger") : text("textDecimal", { n: config.decimals }),
+              min: config.min,
+              max: config.max,
+              reference: config.mode === "reference" ? text("referenceConfig", { reference: config.reference }) : "",
+              unique: config.unique ? text("uniqueConfig") : ""
+            })
       };
     }
 
     function modeName(config) {
-      if (config.mode === "group") return "随机分组";
-      if (config.mode === "reference") return "参考数平衡";
-      return "普通范围";
+      if (config.mode === "group") return text("groupMode");
+      if (config.mode === "reference") return text("referenceMode");
+      return text("rangeMode");
     }
 
     function sampleLabel(id) {
@@ -1852,7 +2213,7 @@ B组</textarea>
       els.unique.checked = false;
       els.sampleCount.value = "24";
       els.groupMethod.value = "balanced";
-      els.groupNames.value = "A组\nB组";
+      els.groupNames.value = state.language === "en" ? "Group A\nGroup B" : "A组\nB组";
       els.seed.value = "";
       els.csvFormat.value = "indexed";
       setNumberType("integer");
@@ -1863,13 +2224,14 @@ B组</textarea>
       state.metadata = null;
       els.sort.value = "original";
       els.regenerate.disabled = true;
-      els.statusPill.textContent = "等待生成";
-      els.resultSubtitle.textContent = "设置条件后点击生成。";
+      els.statusPill.textContent = text("waiting");
+      els.resultSubtitle.textContent = text("resultHint");
       clearFeedback();
       renderResults();
     }
 
     setTheme("light");
+    setLanguage("zh");
     resetForm();
   </script>
 </body>
