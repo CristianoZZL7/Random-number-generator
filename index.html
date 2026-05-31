@@ -1,0 +1,1876 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>随机数生成器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --soft: #f8fafc;
+      --text: #152033;
+      --muted: #667085;
+      --line: #d8e0eb;
+      --primary: #176b87;
+      --primary-strong: #0f5269;
+      --accent: #b76512;
+      --danger: #b42318;
+      --success: #157347;
+      --shadow: 0 18px 48px rgba(21, 32, 51, 0.11);
+      --radius: 8px;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0f172a;
+      --panel: #111827;
+      --soft: #172033;
+      --text: #e5edf7;
+      --muted: #9aa8bc;
+      --line: #2b3a51;
+      --primary: #62c3e6;
+      --primary-strong: #9adcf2;
+      --accent: #f0b35a;
+      --danger: #ff8a80;
+      --success: #72d6a0;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #fbfdff 0%, var(--bg) 60%, #eef3f8 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    html[data-theme="dark"] body {
+      background: linear-gradient(180deg, #0b1120 0%, var(--bg) 58%, #101827 100%);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .page {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.1;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border: 1px solid #bed7df;
+      border-radius: 999px;
+      background: #edf7fa;
+      color: var(--primary-strong);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    html[data-theme="dark"] .status-pill {
+      border-color: #2e6075;
+      background: #102b3a;
+      color: #b8edff;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(340px, 450px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel {
+      position: sticky;
+      top: 16px;
+      padding: 18px;
+    }
+
+    .section {
+      padding: 16px 0;
+      border-top: 1px solid #edf1f6;
+    }
+
+    html[data-theme="dark"] .section {
+      border-color: #243247;
+    }
+
+    .section:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #344054;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    html[data-theme="dark"] label {
+      color: #cbd7e6;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] select,
+    html[data-theme="dark"] textarea {
+      border-color: #334155;
+      background: #0f172a;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.15);
+    }
+
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+      background: #f1f5f9;
+      color: #98a2b3;
+    }
+
+    html[data-theme="dark"] input:disabled,
+    html[data-theme="dark"] select:disabled,
+    html[data-theme="dark"] textarea:disabled {
+      background: #152033;
+      color: #718096;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .segmented.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .choice,
+    .preset {
+      min-height: 40px;
+      padding: 9px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: #fff;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    html[data-theme="dark"] .choice,
+    html[data-theme="dark"] .preset {
+      border-color: #334155;
+      background: #111827;
+      color: #d9e4f2;
+    }
+
+    .choice.is-active,
+    .preset:hover,
+    .preset:focus-visible {
+      border-color: var(--primary);
+      background: #edf7fa;
+      color: var(--primary-strong);
+    }
+
+    html[data-theme="dark"] .choice.is-active,
+    html[data-theme="dark"] .preset:hover,
+    html[data-theme="dark"] .preset:focus-visible {
+      border-color: #62c3e6;
+      background: #102b3a;
+      color: #c7f2ff;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 10px 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: var(--soft);
+    }
+
+    html[data-theme="dark"] .checkbox-row {
+      border-color: #334155;
+      background: #172033;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      min-height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .form-actions,
+    .toolbar,
+    .export-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 7px;
+      font-weight: 700;
+      line-height: 1.2;
+      transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-strong);
+    }
+
+    html[data-theme="dark"] .btn-primary {
+      background: #1e7897;
+      color: #f2fbff;
+    }
+
+    html[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+      background: #2490b4;
+    }
+
+    .btn-secondary {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #344054;
+    }
+
+    html[data-theme="dark"] .btn-secondary {
+      border-color: #3a4a61;
+      background: #111827;
+      color: #e5edf7;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary-strong);
+    }
+
+    .btn-accent {
+      border: 1px solid #f2c27b;
+      background: #fff4e5;
+      color: #8a4b05;
+    }
+
+    html[data-theme="dark"] .btn-accent {
+      border-color: #8f6630;
+      background: #2a1d0e;
+      color: #ffd28a;
+    }
+
+    .btn-small {
+      min-height: 34px;
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .feedback {
+      min-height: 22px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .feedback.error {
+      color: var(--danger);
+      font-weight: 650;
+    }
+
+    .feedback.success {
+      color: var(--success);
+      font-weight: 650;
+    }
+
+    .result-panel {
+      min-height: 660px;
+      overflow: hidden;
+    }
+
+    .result-header {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border-bottom: 1px solid #edf1f6;
+      background: #fbfdff;
+    }
+
+    html[data-theme="dark"] .result-header {
+      background: #101827;
+    }
+
+    .result-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-item,
+    .metadata-box {
+      border: 1px solid #e3e9f1;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    html[data-theme="dark"] .summary-item,
+    html[data-theme="dark"] .metadata-box,
+    html[data-theme="dark"] .history-box,
+    html[data-theme="dark"] .result-item {
+      border-color: #2b3a51;
+      background: #111827;
+    }
+
+    .summary-item {
+      min-height: 70px;
+      padding: 10px;
+    }
+
+    .summary-item span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-item strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .metadata-box {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .metadata-item {
+      min-height: 58px;
+      padding: 10px;
+      border-right: 1px solid #edf1f6;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    html[data-theme="dark"] .metadata-item {
+      border-color: #243247;
+    }
+
+    .metadata-item span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metadata-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .history-box {
+      border: 1px solid #e3e9f1;
+      border-radius: 7px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .history-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #edf1f6;
+      background: #f8fafc;
+    }
+
+    html[data-theme="dark"] .history-head {
+      border-color: #243247;
+      background: #172033;
+    }
+
+    .history-head strong {
+      font-size: 13px;
+    }
+
+    .history-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 0;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .history-empty,
+    .history-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    html[data-theme="dark"] .history-empty,
+    html[data-theme="dark"] .history-item {
+      border-color: #243247;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .history-title {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .history-meta {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .result-body {
+      padding: 18px;
+    }
+
+    .empty-state {
+      display: grid;
+      place-items: center;
+      min-height: 360px;
+      padding: 28px;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius);
+      background: #fbfdff;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    html[data-theme="dark"] .empty-state {
+      border-color: #3a4a61;
+      background: #0f172a;
+    }
+
+    .empty-state strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .result-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .result-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 8px 9px 8px 12px;
+      border: 1px solid #dce4ee;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .result-value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .result-subvalue {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .copy-one {
+      width: 44px;
+      min-height: 30px;
+      padding: 0;
+      border: 1px solid #d0d8e3;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: var(--primary-strong);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    html[data-theme="dark"] .copy-one {
+      border-color: #3a4a61;
+      background: #172033;
+      color: #b8edff;
+    }
+
+    .copy-one:hover {
+      border-color: var(--primary);
+      background: #edf7fa;
+    }
+
+    html[data-theme="dark"] .copy-one:hover {
+      background: #102b3a;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .icon-sm {
+      width: 14px;
+      height: 14px;
+    }
+
+    .brand-title,
+    .with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title {
+      gap: 10px;
+    }
+
+    .brand-title .icon {
+      width: 30px;
+      height: 30px;
+      color: var(--primary);
+    }
+
+    html[data-theme="dark"] .brand-title .icon {
+      color: #8dd9f2;
+    }
+
+    @media (max-width: 980px) {
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .form-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 20px, 1220px);
+        padding: 16px 0;
+      }
+
+      .grid,
+      .segmented,
+      .segmented.two,
+      .preset-grid,
+      .summary,
+      .metadata-box {
+        grid-template-columns: 1fr;
+      }
+
+      .result-title {
+        flex-direction: column;
+      }
+
+      .toolbar,
+      .form-actions,
+      .export-row {
+        align-items: stretch;
+      }
+
+      .btn,
+      .toolbar select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden;">
+    <symbol id="icon-spark" viewBox="0 0 24 24">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"></path>
+      <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"></path>
+    </symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24">
+      <path d="M21 14.5A8.5 8.5 0 0 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+    </symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.9 4.9l1.4 1.4"></path><path d="M17.7 17.7l1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.9 19.1l1.4-1.4"></path><path d="M17.7 6.3l1.4-1.4"></path>
+    </symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7-11-7z"></path>
+    </symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24">
+      <path d="M20 12a8 8 0 1 1-2.3-5.7"></path><path d="M20 4v6h-6"></path>
+    </symbol>
+    <symbol id="icon-reset" viewBox="0 0 24 24">
+      <path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path>
+    </symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24">
+      <rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24">
+      <path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path>
+    </symbol>
+    <symbol id="icon-history" viewBox="0 0 24 24">
+      <path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path><path d="M12 7v5l3 2"></path>
+    </symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24">
+      <path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 15h10l1-15"></path><path d="M10 11v5"></path><path d="M14 11v5"></path>
+    </symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24">
+      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path><circle cx="12" cy="12" r="3"></circle>
+    </symbol>
+  </svg>
+  <main class="page">
+    <header class="app-header">
+      <div>
+        <h1 class="brand-title"><svg class="icon" aria-hidden="true"><use href="#icon-spark"></use></svg><span>随机数生成器</span></h1>
+        <p class="lead">生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和科研导出格式。</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-small" id="themeToggle" type="button" aria-pressed="false"><svg class="icon icon-sm" aria-hidden="true"><use id="themeIcon" href="#icon-moon"></use></svg><span id="themeToggleText">深色模式</span></button>
+        <div class="status-pill" id="statusPill">等待生成</div>
+      </div>
+    </header>
+
+    <div class="app-shell">
+      <section class="panel form-panel" aria-labelledby="formTitle">
+        <div class="section">
+          <div class="section-title">
+            <h2 id="formTitle">生成条件</h2>
+            <span class="hint">范围包含边界</span>
+          </div>
+          <div class="field full">
+            <label>常用预设</label>
+            <div class="preset-grid" aria-label="常用预设">
+              <button class="preset" type="button" data-preset="small-int">1-10 整数</button>
+              <button class="preset" type="button" data-preset="percent-int">1-100 整数</button>
+              <button class="preset" type="button" data-preset="unit-decimal">0-1 小数</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">
+            <h2>生成模式</h2>
+          </div>
+          <div class="segmented" aria-label="生成模式">
+            <button class="choice is-active" type="button" data-mode="range">普通范围</button>
+            <button class="choice" type="button" data-mode="reference">参考数平衡</button>
+            <button class="choice" type="button" data-mode="group">随机分组</button>
+          </div>
+        </div>
+
+        <div class="section" id="numberSettings">
+          <div class="grid">
+            <div class="field">
+              <label for="minValue">最小值</label>
+              <input id="minValue" type="number" step="any" value="1">
+            </div>
+            <div class="field">
+              <label for="maxValue">最大值</label>
+              <input id="maxValue" type="number" step="any" value="100">
+            </div>
+            <div class="field">
+              <label for="countValue">生成数量</label>
+              <input id="countValue" type="number" min="1" step="1" value="10">
+            </div>
+            <div class="field">
+              <label for="decimalPlaces">小数位数</label>
+              <input id="decimalPlaces" type="number" min="0" step="1" value="2" disabled>
+            </div>
+          </div>
+
+          <div class="section" style="padding-bottom: 0;">
+            <div class="section-title">
+              <h2>数字类型</h2>
+            </div>
+            <div class="segmented two" aria-label="数字类型">
+              <button class="choice is-active" type="button" data-number-type="integer">整数</button>
+              <button class="choice" type="button" data-number-type="decimal">小数</button>
+            </div>
+          </div>
+
+          <div class="field full" id="referenceField" style="margin-top: 16px;">
+            <label for="referenceValue">参考数</label>
+            <input id="referenceValue" type="number" step="any" value="50" disabled>
+            <span class="hint">尽量平衡参考数上下两侧数量，不做靠近参考数的偏置。</span>
+          </div>
+
+          <div class="field full" style="margin-top: 16px;">
+            <label class="checkbox-row" for="uniqueOnly">
+              <input id="uniqueOnly" type="checkbox">
+              <span>不允许重复结果</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="section hidden" id="groupSettings">
+          <div class="grid">
+            <div class="field">
+              <label for="sampleCount">样本数量</label>
+              <input id="sampleCount" type="number" min="1" step="1" value="24">
+            </div>
+            <div class="field">
+              <label for="groupMethod">分配方式</label>
+              <select id="groupMethod">
+                <option value="balanced">均衡分配</option>
+                <option value="random">完全随机</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="groupNames">分组名称</label>
+              <textarea id="groupNames">A组
+B组</textarea>
+              <span class="hint">每行一个组名。均衡分配会尽量让每组样本数接近。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="grid">
+            <div class="field full">
+              <label for="seedValue">随机种子 Seed</label>
+              <input id="seedValue" type="text" placeholder="留空则每次随机；填写后可复现">
+              <span class="hint">同样的条件和 Seed 会得到同样的结果，适合论文记录和实验复现。</span>
+            </div>
+            <div class="field full">
+              <label for="csvFormat">CSV 导出格式</label>
+              <select id="csvFormat">
+                <option value="indexed">编号 + 结果</option>
+                <option value="single">仅结果一列</option>
+                <option value="metadata">参数元数据 + 结果</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="form-actions">
+            <button class="btn btn-primary" id="generateBtn" type="button"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-play"></use></svg>生成</button>
+            <button class="btn btn-secondary" id="regenerateBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-refresh"></use></svg>重新生成</button>
+            <button class="btn btn-secondary" id="resetBtn" type="button"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>重置</button>
+          </div>
+          <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="resultTitle">
+        <div class="result-header">
+          <div class="result-title">
+            <div>
+              <h2 id="resultTitle">生成结果</h2>
+              <div class="hint" id="resultSubtitle">设置条件后点击生成。</div>
+            </div>
+            <div class="toolbar">
+              <select id="sortSelect" aria-label="结果排序" disabled>
+                <option value="original">原始顺序</option>
+                <option value="asc">升序</option>
+                <option value="desc">降序</option>
+              </select>
+              <button class="btn btn-secondary btn-small" id="dedupeBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-spark"></use></svg>一键去重</button>
+            </div>
+          </div>
+
+          <div class="summary" aria-label="统计摘要">
+            <div class="summary-item"><span>数量</span><strong id="summaryCount">0</strong></div>
+            <div class="summary-item"><span>最小值</span><strong id="summaryMin">-</strong></div>
+            <div class="summary-item"><span>最大值</span><strong id="summaryMax">-</strong></div>
+            <div class="summary-item"><span>均值</span><strong id="summaryMean">-</strong></div>
+            <div class="summary-item"><span>中位数</span><strong id="summaryMedian">-</strong></div>
+            <div class="summary-item"><span>标准差</span><strong id="summaryStd">-</strong></div>
+            <div class="summary-item"><span>四分位 Q1 / Q3</span><strong id="summaryQuartiles">-</strong></div>
+            <div class="summary-item"><span>模式</span><strong id="summaryMode">-</strong></div>
+          </div>
+
+          <div class="metadata-box" aria-label="生成元数据">
+            <div class="metadata-item"><span>生成时间</span><strong id="metaTime">-</strong></div>
+            <div class="metadata-item"><span>随机种子</span><strong id="metaSeed">-</strong></div>
+            <div class="metadata-item"><span>参数</span><strong id="metaConfig">-</strong></div>
+          </div>
+
+          <div class="history-box" aria-label="历史记录">
+            <div class="history-head">
+              <strong class="with-icon"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-history"></use></svg>历史记录</strong>
+              <div class="history-actions">
+                <span class="hint">最多保留最近 10 次</span>
+                <button class="btn btn-secondary btn-small" id="clearHistoryBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-trash"></use></svg>清除历史记录</button>
+              </div>
+            </div>
+            <div class="history-list" id="historyList">
+              <div class="history-empty" id="historyEmpty">还没有历史记录。生成结果后会自动保存。</div>
+            </div>
+          </div>
+
+          <div class="export-row">
+            <button class="btn btn-primary" id="copyAllBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg>复制全部</button>
+            <button class="btn btn-accent" id="exportTxtBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>导出 TXT</button>
+            <button class="btn btn-accent" id="exportCsvBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>导出 CSV</button>
+          </div>
+        </div>
+
+        <div class="result-body">
+          <div class="empty-state" id="emptyState">
+            <div>
+              <strong>暂无结果</strong>
+              <span>生成后会显示随机数、分组结果、统计摘要和参数元数据。</span>
+            </div>
+          </div>
+          <ul class="result-list hidden" id="resultList"></ul>
+          <p class="footer-note">说明：留空 Seed 时使用浏览器 Math.random()；填写 Seed 时使用确定性伪随机算法，方便复现，不用于密码学安全场景。</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const state = {
+      numberType: "integer",
+      mode: "range",
+      results: [],
+      originalResults: [],
+      lastConfig: null,
+      metadata: null,
+      history: []
+    };
+
+    const els = {
+      min: document.getElementById("minValue"),
+      max: document.getElementById("maxValue"),
+      count: document.getElementById("countValue"),
+      decimals: document.getElementById("decimalPlaces"),
+      reference: document.getElementById("referenceValue"),
+      unique: document.getElementById("uniqueOnly"),
+      sampleCount: document.getElementById("sampleCount"),
+      groupMethod: document.getElementById("groupMethod"),
+      groupNames: document.getElementById("groupNames"),
+      seed: document.getElementById("seedValue"),
+      csvFormat: document.getElementById("csvFormat"),
+      numberSettings: document.getElementById("numberSettings"),
+      groupSettings: document.getElementById("groupSettings"),
+      feedback: document.getElementById("feedback"),
+      statusPill: document.getElementById("statusPill"),
+      resultSubtitle: document.getElementById("resultSubtitle"),
+      resultList: document.getElementById("resultList"),
+      emptyState: document.getElementById("emptyState"),
+      summaryCount: document.getElementById("summaryCount"),
+      summaryMin: document.getElementById("summaryMin"),
+      summaryMax: document.getElementById("summaryMax"),
+      summaryMean: document.getElementById("summaryMean"),
+      summaryMedian: document.getElementById("summaryMedian"),
+      summaryStd: document.getElementById("summaryStd"),
+      summaryQuartiles: document.getElementById("summaryQuartiles"),
+      summaryMode: document.getElementById("summaryMode"),
+      metaTime: document.getElementById("metaTime"),
+      metaSeed: document.getElementById("metaSeed"),
+      metaConfig: document.getElementById("metaConfig"),
+      historyList: document.getElementById("historyList"),
+      historyEmpty: document.getElementById("historyEmpty"),
+      themeToggle: document.getElementById("themeToggle"),
+      themeToggleText: document.getElementById("themeToggleText"),
+      themeIcon: document.getElementById("themeIcon"),
+      clearHistory: document.getElementById("clearHistoryBtn"),
+      sort: document.getElementById("sortSelect"),
+      generate: document.getElementById("generateBtn"),
+      regenerate: document.getElementById("regenerateBtn"),
+      reset: document.getElementById("resetBtn"),
+      dedupe: document.getElementById("dedupeBtn"),
+      copyAll: document.getElementById("copyAllBtn"),
+      exportTxt: document.getElementById("exportTxtBtn"),
+      exportCsv: document.getElementById("exportCsvBtn")
+    };
+
+    const presets = {
+      "small-int": { min: 1, max: 10, count: 10, type: "integer", decimals: 0, mode: "range" },
+      "percent-int": { min: 1, max: 100, count: 10, type: "integer", decimals: 0, mode: "range" },
+      "unit-decimal": { min: 0, max: 1, count: 10, type: "decimal", decimals: 2, mode: "range" }
+    };
+
+    document.querySelectorAll("[data-number-type]").forEach((button) => {
+      button.addEventListener("click", () => setNumberType(button.dataset.numberType));
+    });
+
+    document.querySelectorAll("[data-mode]").forEach((button) => {
+      button.addEventListener("click", () => setMode(button.dataset.mode));
+    });
+
+    document.querySelectorAll("[data-preset]").forEach((button) => {
+      button.addEventListener("click", () => applyPreset(button.dataset.preset));
+    });
+
+    els.generate.addEventListener("click", () => generate());
+    els.regenerate.addEventListener("click", () => state.lastConfig && generate(state.lastConfig));
+    els.reset.addEventListener("click", resetForm);
+    els.sort.addEventListener("change", applySort);
+    els.dedupe.addEventListener("click", dedupeResults);
+    els.copyAll.addEventListener("click", copyAllResults);
+    els.exportTxt.addEventListener("click", () => exportFile("txt"));
+    els.exportCsv.addEventListener("click", () => exportFile("csv"));
+    els.themeToggle.addEventListener("click", toggleTheme);
+    els.clearHistory.addEventListener("click", clearHistory);
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+    }
+
+    function setTheme(theme) {
+      if (theme === "dark") {
+        document.documentElement.dataset.theme = "dark";
+        els.themeToggleText.textContent = "浅色模式";
+        els.themeIcon.setAttribute("href", "#icon-sun");
+        els.themeToggle.setAttribute("aria-pressed", "true");
+      } else {
+        document.documentElement.dataset.theme = "light";
+        els.themeToggleText.textContent = "深色模式";
+        els.themeIcon.setAttribute("href", "#icon-moon");
+        els.themeToggle.setAttribute("aria-pressed", "false");
+      }
+    }
+
+    function setNumberType(type) {
+      state.numberType = type;
+      document.querySelectorAll("[data-number-type]").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.numberType === type);
+      });
+      els.decimals.disabled = type !== "decimal";
+      if (type === "integer") {
+        els.decimals.value = "0";
+      } else if (Number(els.decimals.value) === 0) {
+        els.decimals.value = "2";
+      }
+      clearFeedback();
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.mode === mode);
+      });
+      els.numberSettings.classList.toggle("hidden", mode === "group");
+      els.groupSettings.classList.toggle("hidden", mode !== "group");
+      els.reference.disabled = mode !== "reference";
+      clearFeedback();
+    }
+
+    function applyPreset(name) {
+      const preset = presets[name];
+      if (!preset) return;
+      els.min.value = preset.min;
+      els.max.value = preset.max;
+      els.count.value = preset.count;
+      els.decimals.value = preset.decimals;
+      setNumberType(preset.type);
+      setMode(preset.mode);
+      setFeedback("已应用预设，可以直接生成。", "success");
+    }
+
+    function readConfig() {
+      const seedText = els.seed.value.trim();
+      if (state.mode === "group") {
+        const sampleCount = Number(els.sampleCount.value);
+        const groups = els.groupNames.value.split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
+        if (!Number.isInteger(sampleCount) || sampleCount <= 0) {
+          throw new Error("样本数量必须是正整数。");
+        }
+        if (groups.length < 2) {
+          throw new Error("随机分组至少需要两个组名。");
+        }
+        return {
+          mode: "group",
+          sampleCount,
+          groupMethod: els.groupMethod.value,
+          groups,
+          seed: seedText,
+          random: createRandom(seedText)
+        };
+      }
+
+      const min = Number(els.min.value);
+      const max = Number(els.max.value);
+      const count = Number(els.count.value);
+      const decimals = state.numberType === "decimal" ? Number(els.decimals.value) : 0;
+      const reference = Number(els.reference.value);
+
+      if (!Number.isFinite(min) || !Number.isFinite(max)) {
+        throw new Error("请输入有效的最小值和最大值。");
+      }
+      if (min > max) {
+        throw new Error("最小值不能大于最大值。");
+      }
+      if (!Number.isInteger(count) || count <= 0) {
+        throw new Error("生成数量必须是正整数。");
+      }
+      if (!Number.isInteger(decimals) || decimals < 0 || decimals > 10) {
+        throw new Error("小数位数必须是 0 到 10 之间的整数。");
+      }
+      if (state.mode === "reference") {
+        if (!Number.isFinite(reference)) {
+          throw new Error("请输入有效的参考数。");
+        }
+        if (reference < min || reference > max) {
+          throw new Error("参考数必须在最小值和最大值之间。");
+        }
+      }
+
+      const config = {
+        mode: state.mode,
+        numberType: state.numberType,
+        min,
+        max,
+        count,
+        decimals,
+        reference,
+        unique: els.unique.checked,
+        seed: seedText,
+        random: createRandom(seedText)
+      };
+      validateCapacity(config);
+      return config;
+    }
+
+    function validateCapacity(config) {
+      if (config.numberType === "integer") {
+        const minInt = Math.ceil(config.min);
+        const maxInt = Math.floor(config.max);
+        if (minInt > maxInt) {
+          throw new Error("当前范围内没有可生成的整数。");
+        }
+        if (config.unique && config.count > maxInt - minInt + 1) {
+          throw new Error("不允许重复时，当前整数范围内可用数字不足。");
+        }
+      }
+
+      if (config.numberType === "decimal" && config.unique) {
+        const scale = 10 ** config.decimals;
+        const minScaled = Math.ceil(config.min * scale);
+        const maxScaled = Math.floor(config.max * scale);
+        if (minScaled > maxScaled || config.count > maxScaled - minScaled + 1) {
+          throw new Error("不允许重复时，当前小数位数下可用数字不足。");
+        }
+      }
+    }
+
+    function generate(config = null) {
+      try {
+        const activeConfig = config || readConfig();
+        activeConfig.random = createRandom(activeConfig.seed || "");
+        const generated = activeConfig.mode === "group"
+          ? generateGroups(activeConfig)
+          : activeConfig.mode === "reference"
+            ? generateBalanced(activeConfig)
+            : generateRange(activeConfig, activeConfig.count, activeConfig.min, activeConfig.max);
+
+        state.results = generated;
+        state.originalResults = cloneResults(generated);
+        state.lastConfig = cloneConfig(activeConfig);
+        state.metadata = buildMetadata(activeConfig);
+        pushHistory();
+        els.sort.value = "original";
+        renderResults();
+        setFeedback("已生成结果。", "success");
+        els.statusPill.textContent = `已生成 ${generated.length} 项`;
+        els.regenerate.disabled = false;
+      } catch (error) {
+        setFeedback(error.message, "error");
+        els.statusPill.textContent = "条件需要调整";
+      }
+    }
+
+    function generateRange(config, count, min, max, exclude = new Set()) {
+      return config.numberType === "integer"
+        ? generateIntegers(config, count, min, max, exclude)
+        : generateDecimals(config, count, min, max, exclude);
+    }
+
+    function generateIntegers(config, count, min, max, exclude) {
+      const minInt = Math.ceil(min);
+      const maxInt = Math.floor(max);
+      if (minInt > maxInt && count > 0) {
+        throw new Error("当前范围内没有可生成的整数。");
+      }
+      if (config.unique) {
+        const pool = [];
+        for (let value = minInt; value <= maxInt; value += 1) {
+          if (!exclude.has(String(value))) pool.push(value);
+        }
+        if (pool.length < count) {
+          throw new Error("不允许重复时，可用整数数量不足。");
+        }
+        shuffle(pool, config.random);
+        return pool.slice(0, count);
+      }
+      return Array.from({ length: count }, () => randomInteger(minInt, maxInt, config.random));
+    }
+
+    function generateDecimals(config, count, min, max, exclude) {
+      const scale = 10 ** config.decimals;
+      const minScaled = Math.ceil(min * scale);
+      const maxScaled = Math.floor(max * scale);
+      if (minScaled > maxScaled && count > 0) {
+        throw new Error("当前范围和小数位数下没有可生成的小数。");
+      }
+      if (config.unique) {
+        const pool = [];
+        for (let value = minScaled; value <= maxScaled; value += 1) {
+          const normalized = formatNumber(value / scale, config);
+          if (!exclude.has(normalized)) pool.push(value / scale);
+        }
+        if (pool.length < count) {
+          throw new Error("不允许重复时，可用小数数量不足。");
+        }
+        shuffle(pool, config.random);
+        return pool.slice(0, count).map((value) => Number(formatNumber(value, config)));
+      }
+      return Array.from({ length: count }, () => {
+        const scaled = randomInteger(minScaled, maxScaled, config.random);
+        return Number(formatNumber(scaled / scale, config));
+      });
+    }
+
+    function generateBalanced(config) {
+      const counts = splitBalancedCount(config);
+      const used = new Set();
+      const lower = generateRange(config, counts.lower, config.min, lowerMax(config), used);
+      lower.forEach((value) => used.add(formatNumber(value, config)));
+      const upper = generateRange(config, counts.upper, upperMin(config), config.max, used);
+      const results = [...lower, ...upper];
+      for (let i = 0; i < counts.equal; i += 1) {
+        results.push(normalizeValue(config.reference, config));
+      }
+      shuffle(results, config.random);
+      return results;
+    }
+
+    function splitBalancedCount(config) {
+      const canLower = hasLowerRange(config);
+      const canUpper = hasUpperRange(config);
+      if (!canLower && !canUpper) return { lower: 0, upper: 0, equal: config.count };
+      if (!canLower) return { lower: 0, upper: config.count, equal: 0 };
+      if (!canUpper) return { lower: config.count, upper: 0, equal: 0 };
+
+      const lowerExtra = config.random() < 0.5;
+      const desired = {
+        lower: Math.floor(config.count / 2) + (config.count % 2 && lowerExtra ? 1 : 0),
+        upper: Math.floor(config.count / 2) + (config.count % 2 && !lowerExtra ? 1 : 0),
+        equal: 0
+      };
+      if (!config.unique) return desired;
+
+      const capacity = getReferenceCapacities(config);
+      let lower = Math.min(desired.lower, capacity.lower);
+      let upper = Math.min(desired.upper, capacity.upper);
+      let equal = 0;
+      let remaining = config.count - lower - upper;
+      const addLower = Math.min(remaining, capacity.lower - lower);
+      lower += addLower;
+      remaining -= addLower;
+      const addUpper = Math.min(remaining, capacity.upper - upper);
+      upper += addUpper;
+      remaining -= addUpper;
+      if (remaining > 0 && capacity.equal > 0) {
+        equal = 1;
+        remaining -= 1;
+      }
+      if (remaining > 0) {
+        throw new Error("参考数模式下，不允许重复时可用数字数量不足。");
+      }
+      return { lower, upper, equal };
+    }
+
+    function getReferenceCapacities(config) {
+      if (config.numberType === "integer") {
+        const minInt = Math.ceil(config.min);
+        const maxInt = Math.floor(config.max);
+        const lower = Math.max(0, Math.min(maxInt, Math.floor(config.reference - 1e-12)) - minInt + 1);
+        const upper = Math.max(0, maxInt - Math.max(minInt, Math.ceil(config.reference + 1e-12)) + 1);
+        const equal = Number.isInteger(config.reference) && config.reference >= minInt && config.reference <= maxInt ? 1 : 0;
+        return { lower, upper, equal };
+      }
+      const scale = 10 ** config.decimals;
+      const minScaled = Math.ceil(config.min * scale);
+      const maxScaled = Math.floor(config.max * scale);
+      const lower = Math.max(0, Math.min(maxScaled, Math.ceil(config.reference * scale) - 1) - minScaled + 1);
+      const upper = Math.max(0, maxScaled - Math.max(minScaled, Math.floor(config.reference * scale) + 1) + 1);
+      const referenceScaled = Math.round(config.reference * scale);
+      const equal = referenceScaled >= minScaled && referenceScaled <= maxScaled
+        && Math.abs(referenceScaled / scale - config.reference) < 1 / scale / 2 ? 1 : 0;
+      return { lower, upper, equal };
+    }
+
+    function hasLowerRange(config) {
+      return config.numberType === "integer"
+        ? Math.ceil(config.min) <= Math.floor(config.reference - 1e-12)
+        : config.min < config.reference;
+    }
+
+    function hasUpperRange(config) {
+      return config.numberType === "integer"
+        ? Math.ceil(config.reference + 1e-12) <= Math.floor(config.max)
+        : config.reference < config.max;
+    }
+
+    function lowerMax(config) {
+      return config.numberType === "integer"
+        ? Math.floor(config.reference - 1e-12)
+        : (Math.ceil(config.reference * (10 ** config.decimals)) - 1) / (10 ** config.decimals);
+    }
+
+    function upperMin(config) {
+      return config.numberType === "integer"
+        ? Math.ceil(config.reference + 1e-12)
+        : (Math.floor(config.reference * (10 ** config.decimals)) + 1) / (10 ** config.decimals);
+    }
+
+    function generateGroups(config) {
+      const sampleIds = Array.from({ length: config.sampleCount }, (_, index) => index + 1);
+      const results = [];
+      if (config.groupMethod === "random") {
+        sampleIds.forEach((id) => {
+          const group = config.groups[randomInteger(0, config.groups.length - 1, config.random)];
+          results.push({ id, group });
+        });
+        return results;
+      }
+
+      const assignments = [];
+      const base = Math.floor(config.sampleCount / config.groups.length);
+      const remainder = config.sampleCount % config.groups.length;
+      config.groups.forEach((group, index) => {
+        const size = base + (index < remainder ? 1 : 0);
+        for (let i = 0; i < size; i += 1) assignments.push(group);
+      });
+      shuffle(assignments, config.random);
+      sampleIds.forEach((id, index) => results.push({ id, group: assignments[index] }));
+      return results;
+    }
+
+    function randomInteger(min, max, random) {
+      return Math.floor(random() * (max - min + 1)) + min;
+    }
+
+    function shuffle(items, random) {
+      for (let i = items.length - 1; i > 0; i -= 1) {
+        const j = randomInteger(0, i, random);
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+      return items;
+    }
+
+    function createRandom(seedText) {
+      if (!seedText) return Math.random;
+      let seed = 2166136261;
+      for (let i = 0; i < seedText.length; i += 1) {
+        seed ^= seedText.charCodeAt(i);
+        seed = Math.imul(seed, 16777619);
+      }
+      return function seededRandom() {
+        seed += 0x6D2B79F5;
+        let t = seed;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function normalizeValue(value, config) {
+      return config.numberType === "integer" ? Math.round(value) : Number(formatNumber(value, config));
+    }
+
+    function formatNumber(value, config = state.lastConfig) {
+      if (!config || config.mode === "group") return String(value);
+      if (config.numberType === "integer") return String(value);
+      return Number(value).toFixed(config.decimals);
+    }
+
+    function applySort() {
+      if (!state.results.length || state.lastConfig.mode === "group") return;
+      state.results = els.sort.value === "original"
+        ? state.originalResults.slice()
+        : state.results.slice().sort((a, b) => els.sort.value === "asc" ? a - b : b - a);
+      renderResults();
+    }
+
+    function dedupeResults() {
+      if (!state.results.length || state.lastConfig.mode === "group") return;
+      const seen = new Set();
+      state.results = state.results.filter((value) => {
+        const key = formatNumber(value);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      state.originalResults = state.results.slice();
+      els.sort.value = "original";
+      renderResults();
+      setFeedback("已对当前结果去重。", "success");
+    }
+
+    async function copyAllResults() {
+      await copyText(resultLines().join("\n"));
+      setFeedback("已复制全部结果。", "success");
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    function exportFile(type) {
+      const content = type === "csv" ? csvContent() : txtContent();
+      const blob = new Blob([content], { type: type === "csv" ? "text/csv;charset=utf-8" : "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `random-results-${dateStamp()}.${type}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setFeedback(`已导出 ${type.toUpperCase()} 文件。`, "success");
+    }
+
+    function txtContent() {
+      const metadata = metadataLines();
+      return [...metadata, "", ...resultLines()].join("\n");
+    }
+
+    function csvContent() {
+      const format = els.csvFormat.value;
+      if (state.lastConfig.mode === "group") {
+        const resultRows = ["sample_id,group", ...state.results.map((item) => `${item.id},${csvEscape(item.group)}`)];
+        return format === "metadata" ? [...metadataCsvRows(), "", ...resultRows].join("\n") : resultRows.join("\n");
+      }
+      const values = state.results.map((value) => formatNumber(value));
+      if (format === "single") return ["value", ...values.map(csvEscape)].join("\n");
+      const resultRows = ["index,value", ...values.map((value, index) => `${index + 1},${csvEscape(value)}`)];
+      return format === "metadata" ? [...metadataCsvRows(), "", ...resultRows].join("\n") : resultRows.join("\n");
+    }
+
+    function resultLines() {
+      if (!state.lastConfig) return [];
+      if (state.lastConfig.mode === "group") {
+        return state.results.map((item) => `${sampleLabel(item.id)}\t${item.group}`);
+      }
+      return state.results.map((value) => formatNumber(value));
+    }
+
+    function metadataLines() {
+      if (!state.metadata) return [];
+      return [
+        `生成时间: ${state.metadata.time}`,
+        `模式: ${state.metadata.mode}`,
+        `随机种子: ${state.metadata.seed || "未设置"}`,
+        `参数: ${state.metadata.configText}`
+      ];
+    }
+
+    function metadataCsvRows() {
+      if (!state.metadata) return [];
+      return [
+        "metadata_key,metadata_value",
+        `time,${csvEscape(state.metadata.time)}`,
+        `mode,${csvEscape(state.metadata.mode)}`,
+        `seed,${csvEscape(state.metadata.seed || "未设置")}`,
+        `config,${csvEscape(state.metadata.configText)}`
+      ];
+    }
+
+    function csvEscape(value) {
+      const text = String(value);
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function renderResults() {
+      const hasResults = state.results.length > 0;
+      els.emptyState.classList.toggle("hidden", hasResults);
+      els.resultList.classList.toggle("hidden", !hasResults);
+      els.resultList.innerHTML = "";
+
+      state.results.forEach((value) => {
+        const item = document.createElement("li");
+        item.className = "result-item";
+        const valueEl = document.createElement("span");
+        valueEl.className = "result-value";
+        const line = state.lastConfig.mode === "group"
+          ? `${sampleLabel(value.id)}`
+          : formatNumber(value);
+        valueEl.textContent = line;
+        if (state.lastConfig.mode === "group") {
+          const sub = document.createElement("span");
+          sub.className = "result-subvalue";
+          sub.textContent = value.group;
+          valueEl.appendChild(sub);
+        }
+
+        const copyButton = document.createElement("button");
+        copyButton.className = "copy-one";
+        copyButton.type = "button";
+        copyButton.title = "复制这个结果";
+        copyButton.textContent = "复制";
+        copyButton.addEventListener("click", async () => {
+          await copyText(state.lastConfig.mode === "group" ? `${sampleLabel(value.id)}\t${value.group}` : formatNumber(value));
+          setFeedback("已复制单个结果。", "success");
+        });
+
+        item.append(valueEl, copyButton);
+        els.resultList.appendChild(item);
+      });
+
+      updateSummary();
+      updateMetadata();
+      renderHistory();
+      updateActionState(hasResults);
+    }
+
+    function pushHistory() {
+      if (!state.lastConfig || !state.metadata || !state.results.length) return;
+      const snapshot = {
+        id: Date.now(),
+        results: cloneResults(state.results),
+        originalResults: cloneResults(state.originalResults),
+        lastConfig: cloneConfig(state.lastConfig),
+        metadata: { ...state.metadata }
+      };
+      state.history.unshift(snapshot);
+      state.history = state.history.slice(0, 10);
+    }
+
+    function restoreHistory(index) {
+      const snapshot = state.history[index];
+      if (!snapshot) return;
+      state.results = cloneResults(snapshot.results);
+      state.originalResults = cloneResults(snapshot.originalResults);
+      state.lastConfig = cloneConfig(snapshot.lastConfig);
+      state.metadata = { ...snapshot.metadata };
+      els.sort.value = "original";
+      renderResults();
+      setFeedback("已恢复历史记录。", "success");
+      els.statusPill.textContent = `已恢复 ${state.results.length} 项`;
+      els.regenerate.disabled = false;
+    }
+
+    function clearHistory() {
+      if (!state.history.length) return;
+      state.history = [];
+      renderHistory();
+      setFeedback("已清除历史记录。", "success");
+    }
+
+    function renderHistory() {
+      els.historyList.innerHTML = "";
+      els.clearHistory.disabled = state.history.length === 0;
+      if (!state.history.length) {
+        const empty = document.createElement("div");
+        empty.className = "history-empty";
+        empty.textContent = "还没有历史记录。生成结果后会自动保存。";
+        els.historyList.appendChild(empty);
+        return;
+      }
+
+      state.history.forEach((entry, index) => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const text = document.createElement("div");
+        const title = document.createElement("span");
+        title.className = "history-title";
+        title.textContent = `${entry.metadata.mode} · ${entry.results.length} 项`;
+        const meta = document.createElement("span");
+        meta.className = "history-meta";
+        meta.textContent = `${entry.metadata.time} · Seed: ${entry.metadata.seed || "未设置"}`;
+        text.append(title, meta);
+
+        const button = document.createElement("button");
+        button.className = "btn btn-secondary btn-small";
+        button.type = "button";
+        button.innerHTML = '<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg>查看';
+        button.addEventListener("click", () => restoreHistory(index));
+
+        item.append(text, button);
+        els.historyList.appendChild(item);
+      });
+    }
+
+    function updateSummary() {
+      const values = state.lastConfig && state.lastConfig.mode !== "group" ? state.results : [];
+      els.summaryCount.textContent = state.results.length;
+      els.summaryMode.textContent = state.lastConfig ? modeName(state.lastConfig) : "-";
+
+      if (!values.length) {
+        els.summaryMin.textContent = "-";
+        els.summaryMax.textContent = "-";
+        els.summaryMean.textContent = "-";
+        els.summaryMedian.textContent = "-";
+        els.summaryStd.textContent = "-";
+        els.summaryQuartiles.textContent = state.lastConfig && state.lastConfig.mode === "group" ? groupSummary(state.results) : "-";
+      } else {
+        const stats = calcStats(values);
+        els.summaryMin.textContent = formatNumber(stats.min);
+        els.summaryMax.textContent = formatNumber(stats.max);
+        els.summaryMean.textContent = formatStat(stats.mean);
+        els.summaryMedian.textContent = formatStat(stats.median);
+        els.summaryStd.textContent = formatStat(stats.std);
+        els.summaryQuartiles.textContent = `${formatStat(stats.q1)} / ${formatStat(stats.q3)}`;
+      }
+
+      if (state.lastConfig) {
+        els.resultSubtitle.textContent = state.metadata.configText;
+      }
+    }
+
+    function updateMetadata() {
+      if (!state.metadata) {
+        els.metaTime.textContent = "-";
+        els.metaSeed.textContent = "-";
+        els.metaConfig.textContent = "-";
+        return;
+      }
+      els.metaTime.textContent = state.metadata.time;
+      els.metaSeed.textContent = state.metadata.seed || "未设置";
+      els.metaConfig.textContent = state.metadata.configText;
+    }
+
+    function updateActionState(hasResults) {
+      const numeric = hasResults && state.lastConfig.mode !== "group";
+      els.sort.disabled = !numeric;
+      els.dedupe.disabled = !numeric;
+      els.copyAll.disabled = !hasResults;
+      els.exportTxt.disabled = !hasResults;
+      els.exportCsv.disabled = !hasResults;
+    }
+
+    function calcStats(values) {
+      const sorted = values.slice().sort((a, b) => a - b);
+      const sum = values.reduce((total, value) => total + value, 0);
+      const mean = sum / values.length;
+      const variance = values.reduce((total, value) => total + (value - mean) ** 2, 0) / values.length;
+      return {
+        min: sorted[0],
+        max: sorted[sorted.length - 1],
+        mean,
+        median: percentile(sorted, 0.5),
+        std: Math.sqrt(variance),
+        q1: percentile(sorted, 0.25),
+        q3: percentile(sorted, 0.75)
+      };
+    }
+
+    function percentile(sorted, p) {
+      if (sorted.length === 1) return sorted[0];
+      const index = (sorted.length - 1) * p;
+      const lower = Math.floor(index);
+      const upper = Math.ceil(index);
+      const weight = index - lower;
+      return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+    }
+
+    function formatStat(value) {
+      if (!Number.isFinite(value)) return "-";
+      return Number(value.toFixed(6)).toString();
+    }
+
+    function groupSummary(results) {
+      if (!results.length) return "-";
+      const counts = new Map();
+      results.forEach((item) => counts.set(item.group, (counts.get(item.group) || 0) + 1));
+      return [...counts.entries()].map(([group, count]) => `${group}:${count}`).join(" ");
+    }
+
+    function buildMetadata(config) {
+      return {
+        time: new Date().toLocaleString("zh-CN"),
+        mode: modeName(config),
+        seed: config.seed,
+        configText: config.mode === "group"
+          ? `${config.sampleCount} 个样本，${config.groups.length} 组，${config.groupMethod === "balanced" ? "均衡分配" : "完全随机"}`
+          : `${config.numberType === "integer" ? "整数" : `${config.decimals} 位小数`}，范围 ${config.min} 到 ${config.max}${config.mode === "reference" ? `，参考数 ${config.reference}` : ""}${config.unique ? "，不重复" : ""}`
+      };
+    }
+
+    function modeName(config) {
+      if (config.mode === "group") return "随机分组";
+      if (config.mode === "reference") return "参考数平衡";
+      return "普通范围";
+    }
+
+    function sampleLabel(id) {
+      return `S${String(id).padStart(3, "0")}`;
+    }
+
+    function cloneResults(results) {
+      return results.map((item) => typeof item === "object" ? { ...item } : item);
+    }
+
+    function cloneConfig(config) {
+      const clone = { ...config };
+      delete clone.random;
+      return clone;
+    }
+
+    function dateStamp() {
+      const date = new Date();
+      const pad = (value) => String(value).padStart(2, "0");
+      return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}-${pad(date.getHours())}${pad(date.getMinutes())}`;
+    }
+
+    function setFeedback(message, type) {
+      els.feedback.textContent = message;
+      els.feedback.className = `feedback ${type || ""}`.trim();
+    }
+
+    function clearFeedback() {
+      setFeedback("", "");
+    }
+
+    function resetForm() {
+      els.min.value = "1";
+      els.max.value = "100";
+      els.count.value = "10";
+      els.decimals.value = "0";
+      els.reference.value = "50";
+      els.unique.checked = false;
+      els.sampleCount.value = "24";
+      els.groupMethod.value = "balanced";
+      els.groupNames.value = "A组\nB组";
+      els.seed.value = "";
+      els.csvFormat.value = "indexed";
+      setNumberType("integer");
+      setMode("range");
+      state.results = [];
+      state.originalResults = [];
+      state.lastConfig = null;
+      state.metadata = null;
+      els.sort.value = "original";
+      els.regenerate.disabled = true;
+      els.statusPill.textContent = "等待生成";
+      els.resultSubtitle.textContent = "设置条件后点击生成。";
+      clearFeedback();
+      renderResults();
+    }
+
+    setTheme("light");
+    resetForm();
+  </script>
+</body>
+</html>
