@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,9 +38,7 @@
       --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -49,33 +47,25 @@
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
       letter-spacing: 0;
+      overflow: hidden;
     }
 
     html[data-theme="dark"] body {
       background: linear-gradient(180deg, #0b1120 0%, var(--bg) 58%, #101827 100%);
     }
 
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
-    }
+    button, input, select, textarea { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; }
 
     .page {
-      width: min(1220px, calc(100% - 32px));
+      width: min(1240px, calc(100% - 32px));
+      height: 100vh;
       margin: 0 auto;
-      padding: 28px 0;
+      padding: 24px 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 18px;
     }
 
     .app-header {
@@ -83,7 +73,6 @@
       justify-content: space-between;
       align-items: flex-end;
       gap: 18px;
-      margin-bottom: 18px;
     }
 
     .header-actions {
@@ -92,6 +81,31 @@
       justify-content: flex-end;
       flex-wrap: wrap;
       gap: 10px;
+      position: relative;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.1;
+    }
+
+    .brand-title, .with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title { gap: 10px; }
+    .brand-title .icon { width: 30px; height: 30px; color: var(--primary); }
+    html[data-theme="dark"] .brand-title .icon { color: #8dd9f2; }
+
+    .lead {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
     }
 
     .language-select {
@@ -103,22 +117,7 @@
       font-weight: 700;
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(28px, 4vw, 42px);
-      line-height: 1.1;
-    }
-
-    .lead {
-      margin: 0;
-      max-width: 760px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
     .status-pill {
-      flex: 0 0 auto;
       display: inline-flex;
       align-items: center;
       min-height: 36px;
@@ -138,10 +137,11 @@
     }
 
     .app-shell {
+      min-height: 0;
       display: grid;
       grid-template-columns: minmax(340px, 450px) minmax(0, 1fr);
       gap: 18px;
-      align-items: start;
+      align-items: stretch;
     }
 
     .panel {
@@ -149,27 +149,21 @@
       border-radius: var(--radius);
       background: var(--panel);
       box-shadow: var(--shadow);
+      min-height: 0;
+      overflow-y: auto;
     }
 
-    .form-panel {
-      position: sticky;
-      top: 16px;
-      padding: 18px;
-    }
+    .form-panel { padding: 18px; }
+    .result-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+    .result-scroll { min-height: 0; overflow-y: auto; }
 
     .section {
       padding: 16px 0;
       border-top: 1px solid #edf1f6;
     }
 
-    html[data-theme="dark"] .section {
-      border-color: #243247;
-    }
-
-    .section:first-child {
-      padding-top: 0;
-      border-top: 0;
-    }
+    html[data-theme="dark"] .section { border-color: #243247; }
+    .section:first-child { padding-top: 0; border-top: 0; }
 
     .section-title {
       display: flex;
@@ -179,17 +173,8 @@
       margin-bottom: 12px;
     }
 
-    h2 {
-      margin: 0;
-      font-size: 16px;
-      line-height: 1.4;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
+    h2 { margin: 0; font-size: 16px; line-height: 1.4; }
+    .hint { color: var(--muted); font-size: 13px; line-height: 1.6; }
 
     .grid {
       display: grid;
@@ -197,14 +182,8 @@
       gap: 12px;
     }
 
-    .field {
-      display: grid;
-      gap: 7px;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
+    .field { display: grid; gap: 7px; }
+    .full { grid-column: 1 / -1; }
 
     label {
       color: #344054;
@@ -212,13 +191,9 @@
       font-weight: 650;
     }
 
-    html[data-theme="dark"] label {
-      color: #cbd7e6;
-    }
+    html[data-theme="dark"] label { color: #cbd7e6; }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       min-height: 42px;
       padding: 9px 11px;
@@ -238,22 +213,14 @@
       color: var(--text);
     }
 
-    textarea {
-      min-height: 82px;
-      resize: vertical;
-      line-height: 1.5;
-    }
+    textarea { min-height: 82px; resize: vertical; line-height: 1.5; }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.15);
     }
 
-    input:disabled,
-    select:disabled,
-    textarea:disabled {
+    input:disabled, select:disabled, textarea:disabled {
       background: #f1f5f9;
       color: #98a2b3;
     }
@@ -271,18 +238,10 @@
       gap: 8px;
     }
 
-    .segmented.two {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    .segmented.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .preset-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 
-    .preset-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .choice,
-    .preset {
+    .choice, .preset {
       min-height: 40px;
       padding: 9px 10px;
       border: 1px solid #cbd5e1;
@@ -301,9 +260,7 @@
       color: #d9e4f2;
     }
 
-    .choice.is-active,
-    .preset:hover,
-    .preset:focus-visible {
+    .choice.is-active, .preset:hover, .preset:focus-visible {
       border-color: var(--primary);
       background: #edf7fa;
       color: var(--primary-strong);
@@ -328,24 +285,35 @@
       background: var(--soft);
     }
 
-    html[data-theme="dark"] .checkbox-row {
-      border-color: #334155;
-      background: #172033;
-    }
+    html[data-theme="dark"] .checkbox-row { border-color: #334155; background: #172033; }
+    .checkbox-row input { width: 18px; min-height: 18px; accent-color: var(--primary); }
 
-    .checkbox-row input {
-      width: 18px;
-      min-height: 18px;
-      accent-color: var(--primary);
-    }
-
-    .form-actions,
-    .toolbar,
-    .export-row {
+    .form-actions, .toolbar, .export-row, .table-toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       align-items: center;
+    }
+
+    .toolbar {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      margin-left: auto;
+      min-width: 0;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .toolbar .btn,
+    .table-toolbar .btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .toolbar select {
+      width: 180px;
+      min-width: 180px;
+      flex: 0 0 180px;
     }
 
     .btn {
@@ -361,27 +329,16 @@
       transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
     }
 
-    .btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-strong);
-    }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-strong); }
 
     html[data-theme="dark"] .btn-primary {
       background: #1e7897;
       color: #f2fbff;
     }
 
-    html[data-theme="dark"] .btn-primary:hover:not(:disabled) {
-      background: #2490b4;
-    }
+    html[data-theme="dark"] .btn-primary:hover:not(:disabled) { background: #2490b4; }
 
     .btn-secondary {
       border: 1px solid #cbd5e1;
@@ -412,11 +369,7 @@
       color: #ffd28a;
     }
 
-    .btn-small {
-      min-height: 34px;
-      padding: 7px 10px;
-      font-size: 12px;
-    }
+    .btn-small { min-height: 34px; padding: 7px 10px; font-size: 12px; }
 
     .feedback {
       min-height: 22px;
@@ -426,20 +379,8 @@
       line-height: 1.5;
     }
 
-    .feedback.error {
-      color: var(--danger);
-      font-weight: 650;
-    }
-
-    .feedback.success {
-      color: var(--success);
-      font-weight: 650;
-    }
-
-    .result-panel {
-      min-height: 660px;
-      overflow: hidden;
-    }
+    .feedback.error { color: var(--danger); font-weight: 650; }
+    .feedback.success { color: var(--success); font-weight: 650; }
 
     .result-header {
       display: grid;
@@ -449,9 +390,7 @@
       background: #fbfdff;
     }
 
-    html[data-theme="dark"] .result-header {
-      background: #101827;
-    }
+    html[data-theme="dark"] .result-header { background: #101827; border-color: #243247; }
 
     .result-title {
       display: flex;
@@ -466,8 +405,7 @@
       gap: 10px;
     }
 
-    .summary-item,
-    .metadata-box {
+    .summary-item, .metadata-box, .table-box {
       border: 1px solid #e3e9f1;
       border-radius: 7px;
       background: #fff;
@@ -475,18 +413,14 @@
 
     html[data-theme="dark"] .summary-item,
     html[data-theme="dark"] .metadata-box,
-    html[data-theme="dark"] .history-box,
+    html[data-theme="dark"] .table-box,
     html[data-theme="dark"] .result-item {
       border-color: #2b3a51;
       background: #111827;
     }
 
-    .summary-item {
-      min-height: 70px;
-      padding: 10px;
-    }
-
-    .summary-item span {
+    .summary-item { min-height: 70px; padding: 10px; }
+    .summary-item span, .metadata-item span {
       display: block;
       margin-bottom: 6px;
       color: var(--muted);
@@ -514,28 +448,19 @@
       border-bottom: 1px solid #edf1f6;
     }
 
-    html[data-theme="dark"] .metadata-item {
-      border-color: #243247;
-    }
+    html[data-theme="dark"] .metadata-item { border-color: #243247; }
+    .metadata-item strong { display: block; font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
 
-    .metadata-item span {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .metadata-item strong {
-      display: block;
-      font-size: 13px;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-    }
-
-    .history-box {
-      border: 1px solid #e3e9f1;
-      border-radius: 7px;
-      background: #fff;
+    .history-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 20;
+      width: min(420px, calc(100vw - 32px));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
       overflow: hidden;
     }
 
@@ -549,78 +474,35 @@
       background: #f8fafc;
     }
 
-    html[data-theme="dark"] .history-head {
-      border-color: #243247;
-      background: #172033;
-    }
-
-    .history-head strong {
-      font-size: 13px;
-    }
-
-    .history-actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    html[data-theme="dark"] .history-head { border-color: #243247; background: #172033; }
+    .history-head strong { font-size: 13px; }
+    .history-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 
     .history-list {
       display: grid;
-      gap: 0;
-      max-height: 220px;
+      max-height: 360px;
       overflow: auto;
     }
 
-    .history-empty,
-    .history-item {
+    .history-empty, .history-item {
       padding: 10px 12px;
       border-bottom: 1px solid #edf1f6;
     }
 
     html[data-theme="dark"] .history-empty,
-    html[data-theme="dark"] .history-item {
-      border-color: #243247;
-    }
+    html[data-theme="dark"] .history-item { border-color: #243247; }
 
-    .history-empty {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
+    .history-empty { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .history-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+    .history-title { display: block; margin-bottom: 3px; font-size: 13px; font-weight: 750; overflow-wrap: anywhere; }
+    .history-meta { display: block; color: var(--muted); font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
 
-    .history-item {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .history-title {
-      display: block;
-      margin-bottom: 3px;
-      font-size: 13px;
-      font-weight: 750;
-      overflow-wrap: anywhere;
-    }
-
-    .history-meta {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-      overflow-wrap: anywhere;
-    }
-
-    .result-body {
-      padding: 18px;
-    }
+    .result-body { padding: 18px; }
 
     .empty-state {
       display: grid;
       place-items: center;
-      min-height: 360px;
+      min-height: 220px;
       padding: 28px;
       border: 1px dashed #cbd5e1;
       border-radius: var(--radius);
@@ -629,17 +511,8 @@
       text-align: center;
     }
 
-    html[data-theme="dark"] .empty-state {
-      border-color: #3a4a61;
-      background: #0f172a;
-    }
-
-    .empty-state strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--text);
-      font-size: 18px;
-    }
+    html[data-theme="dark"] .empty-state { border-color: #3a4a61; background: #0f172a; }
+    .empty-state strong { display: block; margin-bottom: 8px; color: var(--text); font-size: 18px; }
 
     .result-list {
       display: grid;
@@ -662,19 +535,8 @@
       background: #fff;
     }
 
-    .result-value {
-      font-variant-numeric: tabular-nums;
-      font-weight: 750;
-      overflow-wrap: anywhere;
-    }
-
-    .result-subvalue {
-      display: block;
-      margin-top: 2px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .result-value { font-variant-numeric: tabular-nums; font-weight: 750; overflow-wrap: anywhere; }
+    .result-subvalue { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 600; }
 
     .copy-one {
       width: 44px;
@@ -688,171 +550,121 @@
       font-weight: 700;
     }
 
-    html[data-theme="dark"] .copy-one {
-      border-color: #3a4a61;
-      background: #172033;
-      color: #b8edff;
+    html[data-theme="dark"] .copy-one { border-color: #3a4a61; background: #172033; color: #b8edff; }
+    .copy-one:hover { border-color: var(--primary); background: #edf7fa; }
+    html[data-theme="dark"] .copy-one:hover { background: #102b3a; }
+
+    .table-box { margin-top: 18px; overflow: hidden; }
+    .table-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid #edf1f6;
+      background: #fbfdff;
     }
 
-    .copy-one:hover {
-      border-color: var(--primary);
-      background: #edf7fa;
+    .table-head > div:first-child { min-width: 180px; }
+    .table-toolbar {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      margin-left: auto;
+      min-width: 0;
+      max-width: 100%;
+      overflow-x: auto;
+      padding-bottom: 2px;
     }
 
-    html[data-theme="dark"] .copy-one:hover {
-      background: #102b3a;
-    }
+    html[data-theme="dark"] .table-head { border-color: #243247; background: #101827; }
+    .table-head h2 { margin-bottom: 4px; }
+    .table-wrap { max-height: 360px; overflow: auto; }
+    .preview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .preview-table th, .preview-table td { min-width: 110px; padding: 8px 10px; border: 1px solid #e3e9f1; text-align: left; }
+    .preview-table th { position: sticky; top: 0; background: #f8fafc; z-index: 1; font-weight: 750; outline: none; }
+    .preview-table th[contenteditable="true"],
+    .preview-table td[contenteditable="true"] { background: #fff; outline: none; }
+    .preview-table th[contenteditable="true"]:focus,
+    .preview-table td[contenteditable="true"]:focus { box-shadow: inset 0 0 0 2px rgba(23, 107, 135, 0.32); }
 
-    .footer-note {
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-    }
+    html[data-theme="dark"] .preview-table th,
+    html[data-theme="dark"] .preview-table td { border-color: #2b3a51; }
+    html[data-theme="dark"] .preview-table th { background: #172033; }
+    html[data-theme="dark"] .preview-table th[contenteditable="true"],
+    html[data-theme="dark"] .preview-table td[contenteditable="true"] { background: #111827; }
 
-    .hidden {
-      display: none !important;
-    }
+    .footer-note { margin-top: 16px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .hidden { display: none !important; }
 
-    .icon {
-      width: 16px;
-      height: 16px;
-      flex: 0 0 auto;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
-    }
-
-    .icon-sm {
-      width: 14px;
-      height: 14px;
-    }
-
-    .brand-title,
-    .with-icon {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-title {
-      gap: 10px;
-    }
-
-    .brand-title .icon {
-      width: 30px;
-      height: 30px;
-      color: var(--primary);
-    }
-
-    html[data-theme="dark"] .brand-title .icon {
-      color: #8dd9f2;
-    }
+    .icon { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .icon-sm { width: 14px; height: 14px; }
 
     @media (max-width: 980px) {
-      .app-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .header-actions {
-        justify-content: flex-start;
-      }
-
-      .app-shell {
-        grid-template-columns: 1fr;
-      }
-
-      .form-panel {
-        position: static;
-      }
+      body { overflow: auto; }
+      .page { height: auto; min-height: 100vh; }
+      .app-header { flex-direction: column; align-items: flex-start; }
+      .header-actions { justify-content: flex-start; }
+      .app-shell { grid-template-columns: 1fr; }
+      .panel { max-height: 78vh; }
     }
 
     @media (max-width: 680px) {
-      .page {
-        width: min(100% - 20px, 1220px);
-        padding: 16px 0;
-      }
-
-      .grid,
-      .segmented,
-      .segmented.two,
-      .preset-grid,
-      .summary,
-      .metadata-box {
-        grid-template-columns: 1fr;
-      }
-
-      .result-title {
-        flex-direction: column;
-      }
-
-      .toolbar,
-      .form-actions,
-      .export-row {
-        align-items: stretch;
-      }
-
-      .btn,
-      .toolbar select {
-        width: 100%;
-      }
+      .page { width: min(100% - 20px, 1240px); padding: 16px 0; }
+      .grid, .segmented, .segmented.two, .preset-grid, .summary, .metadata-box { grid-template-columns: 1fr; }
+      .result-title, .table-head { flex-direction: column; }
+      .toolbar, .form-actions, .export-row, .table-toolbar { align-items: stretch; }
+      .btn, .toolbar select, .language-select { width: 100%; }
+      .toolbar, .table-toolbar { align-items: center; flex-wrap: nowrap; overflow-x: auto; width: 100%; }
+      .toolbar, .table-toolbar { margin-left: 0; }
+      .toolbar .btn, .table-toolbar .btn { width: auto; }
+      .toolbar select { width: 180px; min-width: 180px; flex-basis: 180px; }
+      .history-menu { left: 0; right: auto; width: calc(100vw - 20px); }
     }
   </style>
 </head>
 <body>
   <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden;">
-    <symbol id="icon-spark" viewBox="0 0 24 24">
-      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"></path>
-      <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"></path>
-    </symbol>
-    <symbol id="icon-moon" viewBox="0 0 24 24">
-      <path d="M21 14.5A8.5 8.5 0 0 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
-    </symbol>
-    <symbol id="icon-sun" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="4"></circle>
-      <path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.9 4.9l1.4 1.4"></path><path d="M17.7 17.7l1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.9 19.1l1.4-1.4"></path><path d="M17.7 6.3l1.4-1.4"></path>
-    </symbol>
-    <symbol id="icon-play" viewBox="0 0 24 24">
-      <path d="M8 5v14l11-7-11-7z"></path>
-    </symbol>
-    <symbol id="icon-refresh" viewBox="0 0 24 24">
-      <path d="M20 12a8 8 0 1 1-2.3-5.7"></path><path d="M20 4v6h-6"></path>
-    </symbol>
-    <symbol id="icon-reset" viewBox="0 0 24 24">
-      <path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path>
-    </symbol>
-    <symbol id="icon-copy" viewBox="0 0 24 24">
-      <rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-    </symbol>
-    <symbol id="icon-download" viewBox="0 0 24 24">
-      <path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path>
-    </symbol>
-    <symbol id="icon-history" viewBox="0 0 24 24">
-      <path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path><path d="M12 7v5l3 2"></path>
-    </symbol>
-    <symbol id="icon-trash" viewBox="0 0 24 24">
-      <path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 15h10l1-15"></path><path d="M10 11v5"></path><path d="M14 11v5"></path>
-    </symbol>
-    <symbol id="icon-eye" viewBox="0 0 24 24">
-      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path><circle cx="12" cy="12" r="3"></circle>
-    </symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"></path><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"></path></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path></symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.9 4.9l1.4 1.4"></path><path d="M17.7 17.7l1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.9 19.1l1.4-1.4"></path><path d="M17.7 6.3l1.4-1.4"></path></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"></path></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"></path><path d="M20 4v6h-6"></path></symbol>
+    <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path></symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></symbol>
+    <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path><path d="M12 7v5l3 2"></path></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 15h10l1-15"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+    <symbol id="icon-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M9 4v16"></path></symbol>
   </svg>
+
   <main class="page">
     <header class="app-header">
       <div>
-        <h1 class="brand-title"><svg class="icon" aria-hidden="true"><use href="#icon-spark"></use></svg><span>随机数生成器</span></h1>
-        <p class="lead">生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和科研导出格式。</p>
+        <h1 class="brand-title"><svg class="icon" aria-hidden="true"><use href="#icon-spark"></use></svg><span data-i18n="appTitle">随机数生成器</span></h1>
+        <p class="lead" data-i18n="lead">生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和表格导出。</p>
       </div>
       <div class="header-actions">
         <select class="language-select" id="languageSelect" aria-label="语言 / Language">
           <option value="zh">中文</option>
           <option value="en">English</option>
         </select>
+        <button class="btn btn-secondary btn-small" id="historyToggle" type="button" aria-expanded="false"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-history"></use></svg><span data-i18n="history">历史记录</span></button>
         <button class="btn btn-secondary btn-small" id="themeToggle" type="button" aria-pressed="false"><svg class="icon icon-sm" aria-hidden="true"><use id="themeIcon" href="#icon-moon"></use></svg><span id="themeToggleText">深色模式</span></button>
         <div class="status-pill" id="statusPill">等待生成</div>
+
+        <div class="history-menu hidden" id="historyMenu">
+          <div class="history-head">
+            <strong class="with-icon"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-history"></use></svg><span data-i18n="history">历史记录</span></strong>
+            <div class="history-actions">
+              <span class="hint" data-i18n="historyLimit">最多保留最近 100 次</span>
+              <button class="btn btn-secondary btn-small" id="clearHistoryBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-trash"></use></svg><span data-i18n="clearHistory">清除历史记录</span></button>
+            </div>
+          </div>
+          <div class="history-list" id="historyList">
+            <div class="history-empty" id="historyEmpty">还没有历史记录。生成结果后会自动保存。</div>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -860,70 +672,66 @@
       <section class="panel form-panel" aria-labelledby="formTitle">
         <div class="section">
           <div class="section-title">
-            <h2 id="formTitle">生成条件</h2>
-            <span class="hint">范围包含边界</span>
+            <h2 id="formTitle" data-i18n="conditions">生成条件</h2>
+            <span class="hint" data-i18n="inclusive">范围包含边界</span>
           </div>
           <div class="field full">
-            <label>常用预设</label>
+            <label data-i18n="presets">常用预设</label>
             <div class="preset-grid" aria-label="常用预设">
-              <button class="preset" type="button" data-preset="small-int">1-10 整数</button>
-              <button class="preset" type="button" data-preset="percent-int">1-100 整数</button>
-              <button class="preset" type="button" data-preset="unit-decimal">0-1 小数</button>
+              <button class="preset" type="button" data-preset="small-int" data-i18n="presetSmall">1-10 整数</button>
+              <button class="preset" type="button" data-preset="percent-int" data-i18n="presetPercent">1-100 整数</button>
+              <button class="preset" type="button" data-preset="unit-decimal" data-i18n="presetDecimal">0-1 小数</button>
             </div>
           </div>
         </div>
 
         <div class="section">
-          <div class="section-title">
-            <h2>生成模式</h2>
-          </div>
+          <div class="section-title"><h2 data-i18n="generationMode">生成模式</h2></div>
           <div class="segmented" aria-label="生成模式">
-            <button class="choice is-active" type="button" data-mode="range">普通范围</button>
-            <button class="choice" type="button" data-mode="reference">参考数平衡</button>
-            <button class="choice" type="button" data-mode="group">随机分组</button>
+            <button class="choice is-active" type="button" data-mode="range" data-i18n="rangeMode">普通范围</button>
+            <button class="choice" type="button" data-mode="reference" data-i18n="referenceMode">参考数平衡</button>
+            <button class="choice" type="button" data-mode="group" data-i18n="groupMode">随机分组</button>
           </div>
         </div>
 
         <div class="section" id="numberSettings">
           <div class="grid">
             <div class="field">
-              <label for="minValue">最小值</label>
+              <label for="minValue" data-i18n="minValue">最小值</label>
               <input id="minValue" type="number" step="any" value="1">
             </div>
             <div class="field">
-              <label for="maxValue">最大值</label>
+              <label for="maxValue" data-i18n="maxValue">最大值</label>
               <input id="maxValue" type="number" step="any" value="100">
             </div>
-            <div class="field">
-              <label for="countValue">生成数量</label>
+            <div class="field" id="countField">
+              <label for="countValue" data-i18n="count">生成数量</label>
               <input id="countValue" type="number" min="1" step="1" value="10">
             </div>
             <div class="field">
-              <label for="decimalPlaces">小数位数</label>
+              <label for="decimalPlaces" data-i18n="decimals">小数位数</label>
               <input id="decimalPlaces" type="number" min="0" step="1" value="2" disabled>
             </div>
           </div>
 
           <div class="section" style="padding-bottom: 0;">
-            <div class="section-title">
-              <h2>数字类型</h2>
-            </div>
+            <div class="section-title"><h2 data-i18n="numberType">数字类型</h2></div>
             <div class="segmented two" aria-label="数字类型">
-              <button class="choice is-active" type="button" data-number-type="integer">整数</button>
-              <button class="choice" type="button" data-number-type="decimal">小数</button>
+              <button class="choice is-active" type="button" data-number-type="integer" data-i18n="integer">整数</button>
+              <button class="choice" type="button" data-number-type="decimal" data-i18n="decimal">小数</button>
             </div>
           </div>
 
           <div class="field full" id="referenceField" style="margin-top: 16px;">
-            <label for="referenceValue">参考数</label>
+            <label for="referenceValue" data-i18n="reference">参考数</label>
             <input id="referenceValue" type="number" step="any" value="50" disabled>
-            <span class="hint">尽量平衡参考数上下两侧数量，不做靠近参考数的偏置。</span>
+            <span class="hint" data-i18n="referenceHint">尽量平衡参考数上下两侧数量，不做靠近参考数的偏置。</span>
           </div>
 
           <div class="field full" style="margin-top: 16px;">
             <label class="checkbox-row" for="uniqueOnly">
               <input id="uniqueOnly" type="checkbox">
-              <span>不允许重复结果</span>
+              <span data-i18n="uniqueOnly">不允许重复结果</span>
             </label>
           </div>
         </div>
@@ -931,21 +739,21 @@
         <div class="section hidden" id="groupSettings">
           <div class="grid">
             <div class="field">
-              <label for="sampleCount">样本数量</label>
+              <label for="sampleCount" data-i18n="sampleCount">样本数量</label>
               <input id="sampleCount" type="number" min="1" step="1" value="24">
             </div>
             <div class="field">
-              <label for="groupMethod">分配方式</label>
+              <label for="groupMethod" data-i18n="groupMethod">分配方式</label>
               <select id="groupMethod">
-                <option value="balanced">均衡分配</option>
-                <option value="random">完全随机</option>
+                <option value="balanced" data-i18n="balanced">均衡分配</option>
+                <option value="random" data-i18n="random">完全随机</option>
               </select>
             </div>
             <div class="field full">
-              <label for="groupNames">分组名称</label>
+              <label for="groupNames" data-i18n="groupNames">分组名称</label>
               <textarea id="groupNames">A组
 B组</textarea>
-              <span class="hint">每行一个组名。均衡分配会尽量让每组样本数接近。</span>
+              <span class="hint" data-i18n="groupHint">每行一个组名。均衡分配会尽量让每组样本数接近，并为每个样本生成一个随机数字。</span>
             </div>
           </div>
         </div>
@@ -953,16 +761,16 @@ B组</textarea>
         <div class="section">
           <div class="grid">
             <div class="field full">
-              <label for="seedValue">随机种子 Seed</label>
-              <input id="seedValue" type="text" placeholder="留空则每次随机；填写后可复现">
-              <span class="hint">同样的条件和 Seed 会得到同样的结果，适合论文记录和实验复现。</span>
+              <label for="seedValue" data-i18n="seed">随机种子 Seed</label>
+              <input id="seedValue" type="text" data-i18n-placeholder="seedPlaceholder" placeholder="留空则每次随机；填写后可复现">
+              <span class="hint" data-i18n="seedHint">同样的条件和 Seed 会得到同样的结果，适合记录和复现。</span>
             </div>
             <div class="field full">
-              <label for="csvFormat">CSV 导出格式</label>
+              <label for="csvFormat" data-i18n="csvFormat">CSV 导出格式</label>
               <select id="csvFormat">
-                <option value="indexed">编号 + 结果</option>
-                <option value="single">仅结果一列</option>
-                <option value="metadata">参数元数据 + 结果</option>
+                <option value="indexed" data-i18n="csvIndexed">编号 + 结果</option>
+                <option value="single" data-i18n="csvSingle">仅结果一列</option>
+                <option value="metadata" data-i18n="csvMetadata">参数元数据 + 结果</option>
               </select>
             </div>
           </div>
@@ -970,9 +778,9 @@ B组</textarea>
 
         <div class="section">
           <div class="form-actions">
-            <button class="btn btn-primary" id="generateBtn" type="button"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-play"></use></svg>生成</button>
-            <button class="btn btn-secondary" id="regenerateBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-refresh"></use></svg>重新生成</button>
-            <button class="btn btn-secondary" id="resetBtn" type="button"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>重置</button>
+            <button class="btn btn-primary" id="generateBtn" type="button"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-play"></use></svg><span data-i18n="generate">生成</span></button>
+            <button class="btn btn-secondary" id="regenerateBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-refresh"></use></svg><span data-i18n="regenerate">重新生成</span></button>
+            <button class="btn btn-secondary" id="resetBtn" type="button"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg><span data-i18n="reset">重置</span></button>
           </div>
           <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
         </div>
@@ -982,65 +790,72 @@ B组</textarea>
         <div class="result-header">
           <div class="result-title">
             <div>
-              <h2 id="resultTitle">生成结果</h2>
+              <h2 id="resultTitle" data-i18n="results">生成结果</h2>
               <div class="hint" id="resultSubtitle">设置条件后点击生成。</div>
             </div>
             <div class="toolbar">
+              <button class="btn btn-secondary btn-small" id="dedupeBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-spark"></use></svg><span data-i18n="dedupe">一键去重</span></button>
               <select id="sortSelect" aria-label="结果排序" disabled>
-                <option value="original">原始顺序</option>
-                <option value="asc">升序</option>
-                <option value="desc">降序</option>
+                <option value="original" data-i18n="original">原始顺序</option>
+                <option value="asc" data-i18n="asc">升序</option>
+                <option value="desc" data-i18n="desc">降序</option>
               </select>
-              <button class="btn btn-secondary btn-small" id="dedupeBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-spark"></use></svg>一键去重</button>
             </div>
           </div>
 
           <div class="summary" aria-label="统计摘要">
-            <div class="summary-item"><span>数量</span><strong id="summaryCount">0</strong></div>
-            <div class="summary-item"><span>最小值</span><strong id="summaryMin">-</strong></div>
-            <div class="summary-item"><span>最大值</span><strong id="summaryMax">-</strong></div>
-            <div class="summary-item"><span>均值</span><strong id="summaryMean">-</strong></div>
-            <div class="summary-item"><span>中位数</span><strong id="summaryMedian">-</strong></div>
-            <div class="summary-item"><span>标准差</span><strong id="summaryStd">-</strong></div>
-            <div class="summary-item"><span>四分位 Q1 / Q3</span><strong id="summaryQuartiles">-</strong></div>
-            <div class="summary-item"><span>模式</span><strong id="summaryMode">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryCount">数量</span><strong id="summaryCount">0</strong></div>
+            <div class="summary-item"><span data-i18n="summaryMin">最小值</span><strong id="summaryMin">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryMax">最大值</span><strong id="summaryMax">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryMean">均值</span><strong id="summaryMean">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryMedian">中位数</span><strong id="summaryMedian">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryStd">标准差</span><strong id="summaryStd">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryQuartiles">四分位 Q1 / Q3</span><strong id="summaryQuartiles">-</strong></div>
+            <div class="summary-item"><span data-i18n="summaryMode">模式</span><strong id="summaryMode">-</strong></div>
           </div>
 
           <div class="metadata-box" aria-label="生成元数据">
-            <div class="metadata-item"><span>生成时间</span><strong id="metaTime">-</strong></div>
-            <div class="metadata-item"><span>随机种子</span><strong id="metaSeed">-</strong></div>
-            <div class="metadata-item"><span>参数</span><strong id="metaConfig">-</strong></div>
-          </div>
-
-          <div class="history-box" aria-label="历史记录">
-            <div class="history-head">
-              <strong class="with-icon"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-history"></use></svg>历史记录</strong>
-              <div class="history-actions">
-                <span class="hint">最多保留最近 10 次</span>
-                <button class="btn btn-secondary btn-small" id="clearHistoryBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-trash"></use></svg>清除历史记录</button>
-              </div>
-            </div>
-            <div class="history-list" id="historyList">
-              <div class="history-empty" id="historyEmpty">还没有历史记录。生成结果后会自动保存。</div>
-            </div>
+            <div class="metadata-item"><span data-i18n="metaTime">生成时间</span><strong id="metaTime">-</strong></div>
+            <div class="metadata-item"><span data-i18n="metaSeed">随机种子</span><strong id="metaSeed">-</strong></div>
+            <div class="metadata-item"><span data-i18n="metaConfig">参数</span><strong id="metaConfig">-</strong></div>
           </div>
 
           <div class="export-row">
-            <button class="btn btn-primary" id="copyAllBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg>复制全部</button>
-            <button class="btn btn-accent" id="exportTxtBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>导出 TXT</button>
-            <button class="btn btn-accent" id="exportCsvBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>导出 CSV</button>
+            <button class="btn btn-primary" id="copyAllVerticalBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg><span data-i18n="copyAllVertical">纵向复制</span></button>
+            <button class="btn btn-secondary" id="copyAllHorizontalBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg><span data-i18n="copyAllHorizontal">横向复制</span></button>
+            <button class="btn btn-accent" id="exportTxtBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg><span data-i18n="exportTxt">导出 TXT</span></button>
+            <button class="btn btn-accent" id="exportCsvBtn" type="button" disabled><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg><span data-i18n="exportCsv">导出 CSV</span></button>
           </div>
         </div>
 
-        <div class="result-body">
-          <div class="empty-state" id="emptyState">
-            <div>
-              <strong>暂无结果</strong>
-              <span>生成后会显示随机数、分组结果、统计摘要和参数元数据。</span>
+        <div class="result-scroll">
+          <div class="result-body">
+            <div class="empty-state" id="emptyState">
+              <div>
+                <strong data-i18n="noResultsTitle">暂无结果</strong>
+                <span data-i18n="noResultsText">生成后会显示随机数、分组结果、统计摘要、参数元数据和表格预览。</span>
+              </div>
             </div>
+            <ul class="result-list hidden" id="resultList"></ul>
+
+            <div class="table-box hidden" id="tableBox">
+              <div class="table-head">
+                <div>
+                  <h2 class="with-icon"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-table"></use></svg><span data-i18n="tablePreview">表格预览</span></h2>
+                  <div class="hint" data-i18n="tableHint">可编辑表头和单元格；复制表格可直接粘贴到 Excel</div>
+                </div>
+                <div class="table-toolbar">
+                  <button class="btn btn-secondary btn-small" id="transposeBtn" type="button" disabled data-i18n="transpose">转置</button>
+                  <button class="btn btn-secondary btn-small" id="copyTableBtn" type="button" disabled data-i18n="copyTable">复制表格</button>
+                  <button class="btn btn-secondary btn-small" id="resetTableBtn" type="button" disabled data-i18n="resetTable">重置预览</button>
+                  <button class="btn btn-accent btn-small" id="exportExcelTableBtn" type="button" disabled data-i18n="exportExcelTable">导出Excel表格</button>
+                </div>
+              </div>
+              <div class="table-wrap" id="tableWrap"></div>
+            </div>
+
+            <p class="footer-note" data-i18n="footer">说明：留空 Seed 时使用浏览器 Math.random()；填写 Seed 时使用确定性伪随机算法，方便复现，不用于密码学安全场景。</p>
           </div>
-          <ul class="result-list hidden" id="resultList"></ul>
-          <p class="footer-note">说明：留空 Seed 时使用浏览器 Math.random()；填写 Seed 时使用确定性伪随机算法，方便复现，不用于密码学安全场景。</p>
         </div>
       </section>
     </div>
@@ -1055,13 +870,15 @@ B组</textarea>
       lastConfig: null,
       metadata: null,
       history: [],
-      language: "zh"
+      language: "zh",
+      tableModel: { columns: [], rows: [], transposed: false }
     };
 
     const els = {
       min: document.getElementById("minValue"),
       max: document.getElementById("maxValue"),
       count: document.getElementById("countValue"),
+      countField: document.getElementById("countField"),
       decimals: document.getElementById("decimalPlaces"),
       reference: document.getElementById("referenceValue"),
       unique: document.getElementById("uniqueOnly"),
@@ -1070,7 +887,6 @@ B组</textarea>
       groupNames: document.getElementById("groupNames"),
       seed: document.getElementById("seedValue"),
       csvFormat: document.getElementById("csvFormat"),
-      numberSettings: document.getElementById("numberSettings"),
       groupSettings: document.getElementById("groupSettings"),
       language: document.getElementById("languageSelect"),
       feedback: document.getElementById("feedback"),
@@ -1089,8 +905,9 @@ B组</textarea>
       metaTime: document.getElementById("metaTime"),
       metaSeed: document.getElementById("metaSeed"),
       metaConfig: document.getElementById("metaConfig"),
+      historyToggle: document.getElementById("historyToggle"),
+      historyMenu: document.getElementById("historyMenu"),
       historyList: document.getElementById("historyList"),
-      historyEmpty: document.getElementById("historyEmpty"),
       themeToggle: document.getElementById("themeToggle"),
       themeToggleText: document.getElementById("themeToggleText"),
       themeIcon: document.getElementById("themeIcon"),
@@ -1100,9 +917,16 @@ B组</textarea>
       regenerate: document.getElementById("regenerateBtn"),
       reset: document.getElementById("resetBtn"),
       dedupe: document.getElementById("dedupeBtn"),
-      copyAll: document.getElementById("copyAllBtn"),
+      copyAllVertical: document.getElementById("copyAllVerticalBtn"),
+      copyAllHorizontal: document.getElementById("copyAllHorizontalBtn"),
       exportTxt: document.getElementById("exportTxtBtn"),
-      exportCsv: document.getElementById("exportCsvBtn")
+      exportCsv: document.getElementById("exportCsvBtn"),
+      tableBox: document.getElementById("tableBox"),
+      tableWrap: document.getElementById("tableWrap"),
+      transpose: document.getElementById("transposeBtn"),
+      copyTable: document.getElementById("copyTableBtn"),
+      resetTable: document.getElementById("resetTableBtn"),
+      exportExcelTable: document.getElementById("exportExcelTableBtn")
     };
 
     const presets = {
@@ -1114,7 +938,7 @@ B组</textarea>
     const uiText = {
       zh: {
         appTitle: "随机数生成器",
-        lead: "生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和科研导出格式。",
+        lead: "生成整数、小数或随机分组；支持可复现随机种子、参数元数据、统计摘要和表格导出。",
         darkMode: "深色模式",
         lightMode: "浅色模式",
         waiting: "等待生成",
@@ -1137,16 +961,16 @@ B组</textarea>
         decimal: "小数",
         reference: "参考数",
         referenceHint: "尽量平衡参考数上下两侧数量，不做靠近参考数的偏置。",
-        uniqueOnly: "不允许重复结果",
+        uniqueOnly: "不允许重复随机数字",
         sampleCount: "样本数量",
         groupMethod: "分配方式",
         balanced: "均衡分配",
         random: "完全随机",
         groupNames: "分组名称",
-        groupHint: "每行一个组名。均衡分配会尽量让每组样本数接近。",
+        groupHint: "每行一个组名。均衡分配会尽量让每组样本数接近，并为每个样本生成一个随机数字。",
         seed: "随机种子 Seed",
         seedPlaceholder: "留空则每次随机；填写后可复现",
-        seedHint: "同样的条件和 Seed 会得到同样的结果，适合论文记录和实验复现。",
+        seedHint: "同样的条件和 Seed 会得到同样的结果，适合记录和复现。",
         csvFormat: "CSV 导出格式",
         csvIndexed: "编号 + 结果",
         csvSingle: "仅结果一列",
@@ -1172,14 +996,15 @@ B组</textarea>
         metaSeed: "随机种子",
         metaConfig: "参数",
         history: "历史记录",
-        historyLimit: "最多保留最近 10 次",
+        historyLimit: "最多保留最近 100 次",
         clearHistory: "清除历史记录",
         emptyHistory: "还没有历史记录。生成结果后会自动保存。",
-        copyAll: "复制全部",
+        copyAllVertical: "纵向复制",
+        copyAllHorizontal: "横向复制",
         exportTxt: "导出 TXT",
         exportCsv: "导出 CSV",
         noResultsTitle: "暂无结果",
-        noResultsText: "生成后会显示随机数、分组结果、统计摘要和参数元数据。",
+        noResultsText: "生成后会显示随机数、分组结果、统计摘要、参数元数据和表格预览。",
         footer: "说明：留空 Seed 时使用浏览器 Math.random()；填写 Seed 时使用确定性伪随机算法，方便复现，不用于密码学安全场景。",
         copyOne: "复制",
         view: "查看",
@@ -1191,18 +1016,26 @@ B组</textarea>
         appliedPreset: "已应用预设，可以直接生成。",
         generatedOk: "已生成结果。",
         deduped: "已对当前结果去重。",
-        copiedAll: "已复制全部结果。",
+        copiedAllVertical: "已纵向复制全部数字。",
+        copiedAllHorizontal: "已横向复制全部数字。",
         copiedOne: "已复制单个结果。",
         restoredHistory: "已恢复历史记录。",
         clearedHistory: "已清除历史记录。",
         exported: "已导出 {type} 文件。",
+        tablePreview: "表格预览",
+        tableHint: "可编辑表头和单元格；复制表格可直接粘贴到 Excel",
+        transpose: "转置",
+        copyTable: "复制表格",
+        resetTable: "重置预览",
+        exportExcelTable: "导出Excel表格",
+        tableCopied: "已复制表格。",
+        tableReset: "表格预览已重置。",
         textInteger: "整数",
         textDecimal: "{n} 位小数",
         configRange: "{type}，范围 {min} 到 {max}{reference}{unique}",
-        configGroup: "{count} 个样本，{groups} 组，{method}",
+        configGroup: "{count} 个样本，{groups} 组，{method}，随机数字范围 {min} 到 {max}{unique}",
         referenceConfig: "，参考数 {reference}",
         uniqueConfig: "，不重复",
-        tab: "生成后会自动保存。",
         errSampleCount: "样本数量必须是正整数。",
         errGroups: "随机分组至少需要两个组名。",
         errRangeNumbers: "请输入有效的最小值和最大值。",
@@ -1221,7 +1054,7 @@ B组</textarea>
       },
       en: {
         appTitle: "Random Number Generator",
-        lead: "Generate integers, decimals, or randomized groups with reproducible seeds, metadata, summary statistics, and research-friendly exports.",
+        lead: "Generate integers, decimals, or randomized groups with reproducible seeds, metadata, summary statistics, and table exports.",
         darkMode: "Dark mode",
         lightMode: "Light mode",
         waiting: "Ready",
@@ -1244,13 +1077,13 @@ B组</textarea>
         decimal: "Decimal",
         reference: "Reference number",
         referenceHint: "Balances counts above and below the reference without biasing values toward it.",
-        uniqueOnly: "Do not allow duplicates",
+        uniqueOnly: "Do not allow duplicate random numbers",
         sampleCount: "Sample count",
         groupMethod: "Assignment method",
         balanced: "Balanced assignment",
         random: "Fully random",
         groupNames: "Group names",
-        groupHint: "Enter one group name per line. Balanced assignment keeps group sizes as close as possible.",
+        groupHint: "Enter one group name per line. Balanced assignment keeps group sizes close and adds one random number per sample.",
         seed: "Random Seed",
         seedPlaceholder: "Leave blank for new random results; fill in to reproduce",
         seedHint: "The same settings and seed produce the same result, useful for records and reproducibility.",
@@ -1279,14 +1112,15 @@ B组</textarea>
         metaSeed: "Seed",
         metaConfig: "Settings",
         history: "History",
-        historyLimit: "Keeps the latest 10 runs",
+        historyLimit: "Keeps the latest 100 runs",
         clearHistory: "Clear history",
         emptyHistory: "No history yet. Successful generations are saved automatically.",
-        copyAll: "Copy all",
+        copyAllVertical: "Copy vertical",
+        copyAllHorizontal: "Copy horizontal",
         exportTxt: "Export TXT",
         exportCsv: "Export CSV",
         noResultsTitle: "No results yet",
-        noResultsText: "Generated numbers, group assignments, summary statistics, and metadata will appear here.",
+        noResultsText: "Generated numbers, group assignments, summary statistics, metadata, and table preview will appear here.",
         footer: "Note: blank Seed uses browser Math.random(); filled Seed uses a deterministic pseudo-random algorithm for reproducibility, not cryptographic security.",
         copyOne: "Copy",
         view: "View",
@@ -1298,15 +1132,24 @@ B组</textarea>
         appliedPreset: "Preset applied. You can generate now.",
         generatedOk: "Results generated.",
         deduped: "Current results deduplicated.",
-        copiedAll: "All results copied.",
+        copiedAllVertical: "All numbers copied vertically.",
+        copiedAllHorizontal: "All numbers copied horizontally.",
         copiedOne: "Single result copied.",
         restoredHistory: "History entry restored.",
         clearedHistory: "History cleared.",
         exported: "{type} file exported.",
+        tablePreview: "Table Preview",
+        tableHint: "Editable headers and cells. Copy table to paste directly into Excel.",
+        transpose: "Transpose",
+        copyTable: "Copy table",
+        resetTable: "Reset preview",
+        exportExcelTable: "Export Excel table",
+        tableCopied: "Table copied.",
+        tableReset: "Table preview reset.",
         textInteger: "integer",
         textDecimal: "{n} decimal places",
         configRange: "{type}, range {min} to {max}{reference}{unique}",
-        configGroup: "{count} samples, {groups} groups, {method}",
+        configGroup: "{count} samples, {groups} groups, {method}, random number range {min} to {max}{unique}",
         referenceConfig: ", reference {reference}",
         uniqueConfig: ", no duplicates",
         errSampleCount: "Sample count must be a positive integer.",
@@ -1330,11 +1173,9 @@ B组</textarea>
     document.querySelectorAll("[data-number-type]").forEach((button) => {
       button.addEventListener("click", () => setNumberType(button.dataset.numberType));
     });
-
     document.querySelectorAll("[data-mode]").forEach((button) => {
       button.addEventListener("click", () => setMode(button.dataset.mode));
     });
-
     document.querySelectorAll("[data-preset]").forEach((button) => {
       button.addEventListener("click", () => applyPreset(button.dataset.preset));
     });
@@ -1344,12 +1185,23 @@ B组</textarea>
     els.reset.addEventListener("click", resetForm);
     els.sort.addEventListener("change", applySort);
     els.dedupe.addEventListener("click", dedupeResults);
-    els.copyAll.addEventListener("click", copyAllResults);
+    els.copyAllVertical.addEventListener("click", () => copyAllNumbers("vertical"));
+    els.copyAllHorizontal.addEventListener("click", () => copyAllNumbers("horizontal"));
     els.exportTxt.addEventListener("click", () => exportFile("txt"));
     els.exportCsv.addEventListener("click", () => exportFile("csv"));
     els.themeToggle.addEventListener("click", toggleTheme);
+    els.historyToggle.addEventListener("click", toggleHistoryMenu);
     els.clearHistory.addEventListener("click", clearHistory);
     els.language.addEventListener("change", () => setLanguage(els.language.value));
+    els.transpose.addEventListener("click", transposeTable);
+    els.copyTable.addEventListener("click", copyTable);
+    els.resetTable.addEventListener("click", resetTablePreview);
+    els.exportExcelTable.addEventListener("click", exportExcelTable);
+    document.addEventListener("click", (event) => {
+      if (!els.historyMenu.classList.contains("hidden") && !els.historyMenu.contains(event.target) && !els.historyToggle.contains(event.target)) {
+        setHistoryMenu(false);
+      }
+    });
 
     function text(key, values = {}) {
       const source = uiText[state.language] || uiText.zh;
@@ -1358,24 +1210,6 @@ B组</textarea>
         value = value.replaceAll(`{${name}}`, replacement);
       });
       return value;
-    }
-
-    function setNodeText(selector, value) {
-      const node = typeof selector === "string" ? document.querySelector(selector) : selector;
-      if (node) node.textContent = value;
-    }
-
-    function setButtonLabel(button, value) {
-      if (!button) return;
-      const icon = button.querySelector("svg");
-      button.textContent = "";
-      if (icon) button.appendChild(icon);
-      button.appendChild(document.createTextNode(value));
-    }
-
-    function setOptionText(selector, value) {
-      const option = document.querySelector(selector);
-      if (option) option.textContent = value;
     }
 
     function setLanguage(language) {
@@ -1387,87 +1221,25 @@ B组</textarea>
     }
 
     function applyLanguage() {
-      setNodeText(".brand-title span", text("appTitle"));
-      setNodeText(".lead", text("lead"));
-      setNodeText("#formTitle", text("conditions"));
-      setNodeText("#formTitle + .hint", text("inclusive"));
-      setNodeText(document.querySelector(".preset-grid")?.closest(".field")?.querySelector("label"), text("presets"));
-      setNodeText('button[data-preset="small-int"]', text("presetSmall"));
-      setNodeText('button[data-preset="percent-int"]', text("presetPercent"));
-      setNodeText('button[data-preset="unit-decimal"]', text("presetDecimal"));
-      setNodeText("#formTitle", text("conditions"));
-      setNodeText(document.querySelectorAll(".section-title h2")[1], text("generationMode"));
-      setNodeText('button[data-mode="range"]', text("rangeMode"));
-      setNodeText('button[data-mode="reference"]', text("referenceMode"));
-      setNodeText('button[data-mode="group"]', text("groupMode"));
-      setNodeText('label[for="minValue"]', text("minValue"));
-      setNodeText('label[for="maxValue"]', text("maxValue"));
-      setNodeText('label[for="countValue"]', text("count"));
-      setNodeText('label[for="decimalPlaces"]', text("decimals"));
-      setNodeText(document.querySelectorAll(".section-title h2")[2], text("numberType"));
-      setNodeText('button[data-number-type="integer"]', text("integer"));
-      setNodeText('button[data-number-type="decimal"]', text("decimal"));
-      setNodeText('label[for="referenceValue"]', text("reference"));
-      setNodeText("#referenceField .hint", text("referenceHint"));
-      setNodeText('label[for="uniqueOnly"] span', text("uniqueOnly"));
-      setNodeText('label[for="sampleCount"]', text("sampleCount"));
-      setNodeText('label[for="groupMethod"]', text("groupMethod"));
-      setOptionText('#groupMethod option[value="balanced"]', text("balanced"));
-      setOptionText('#groupMethod option[value="random"]', text("random"));
-      setNodeText('label[for="groupNames"]', text("groupNames"));
-      setNodeText("#groupSettings .hint", text("groupHint"));
-      setNodeText('label[for="seedValue"]', text("seed"));
-      els.seed.placeholder = text("seedPlaceholder");
-      setNodeText('label[for="seedValue"] + input + .hint', text("seedHint"));
-      setNodeText('label[for="csvFormat"]', text("csvFormat"));
-      setOptionText('#csvFormat option[value="indexed"]', text("csvIndexed"));
-      setOptionText('#csvFormat option[value="single"]', text("csvSingle"));
-      setOptionText('#csvFormat option[value="metadata"]', text("csvMetadata"));
-      setButtonLabel(els.generate, text("generate"));
-      setButtonLabel(els.regenerate, text("regenerate"));
-      setButtonLabel(els.reset, text("reset"));
-      setNodeText("#resultTitle", text("results"));
-      if (!state.lastConfig) els.resultSubtitle.textContent = text("resultHint");
-      setOptionText('#sortSelect option[value="original"]', text("original"));
-      setOptionText('#sortSelect option[value="asc"]', text("asc"));
-      setOptionText('#sortSelect option[value="desc"]', text("desc"));
-      setButtonLabel(els.dedupe, text("dedupe"));
-      setSummaryLabel(els.summaryCount, text("summaryCount"));
-      setSummaryLabel(els.summaryMin, text("summaryMin"));
-      setSummaryLabel(els.summaryMax, text("summaryMax"));
-      setSummaryLabel(els.summaryMean, text("summaryMean"));
-      setSummaryLabel(els.summaryMedian, text("summaryMedian"));
-      setSummaryLabel(els.summaryStd, text("summaryStd"));
-      setSummaryLabel(els.summaryQuartiles, text("summaryQuartiles"));
-      setSummaryLabel(els.summaryMode, text("summaryMode"));
-      setSummaryLabel(els.metaTime, text("metaTime"));
-      setSummaryLabel(els.metaSeed, text("metaSeed"));
-      setSummaryLabel(els.metaConfig, text("metaConfig"));
-      setButtonLabel(document.querySelector(".history-head strong"), text("history"));
-      setNodeText(".history-actions .hint", text("historyLimit"));
-      setButtonLabel(els.clearHistory, text("clearHistory"));
-      setButtonLabel(els.copyAll, text("copyAll"));
-      setButtonLabel(els.exportTxt, text("exportTxt"));
-      setButtonLabel(els.exportCsv, text("exportCsv"));
-      setNodeText(".empty-state strong", text("noResultsTitle"));
-      setNodeText(".empty-state span", text("noResultsText"));
-      setNodeText(".footer-note", text("footer"));
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        node.textContent = text(node.dataset.i18n);
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+        node.placeholder = text(node.dataset.i18nPlaceholder);
+      });
       setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+      els.resultSubtitle.textContent = state.lastConfig ? state.metadata.configText : text("resultHint");
+      if (!state.lastConfig) els.statusPill.textContent = text("waiting");
       if (state.lastConfig) {
         state.metadata = buildMetadata(state.lastConfig);
-        renderResults();
+        renderResults({ preserveTable: true });
         els.statusPill.textContent = `${text("generatedStatus")} ${state.results.length} ${text("itemUnit")}`;
       } else {
         updateSummary();
         updateMetadata();
         renderHistory();
-        els.statusPill.textContent = text("waiting");
+        renderTable();
       }
-    }
-
-    function setSummaryLabel(valueNode, label) {
-      const labelNode = valueNode && valueNode.parentElement ? valueNode.parentElement.querySelector("span") : null;
-      if (labelNode) labelNode.textContent = label;
     }
 
     function toggleTheme() {
@@ -1489,6 +1261,15 @@ B组</textarea>
       }
     }
 
+    function toggleHistoryMenu() {
+      setHistoryMenu(els.historyMenu.classList.contains("hidden"));
+    }
+
+    function setHistoryMenu(open) {
+      els.historyMenu.classList.toggle("hidden", !open);
+      els.historyToggle.setAttribute("aria-expanded", String(open));
+    }
+
     function setNumberType(type) {
       state.numberType = type;
       document.querySelectorAll("[data-number-type]").forEach((button) => {
@@ -1508,9 +1289,9 @@ B组</textarea>
       document.querySelectorAll("[data-mode]").forEach((button) => {
         button.classList.toggle("is-active", button.dataset.mode === mode);
       });
-      els.numberSettings.classList.toggle("hidden", mode === "group");
       els.groupSettings.classList.toggle("hidden", mode !== "group");
       els.reference.disabled = mode !== "reference";
+      els.countField.classList.toggle("hidden", mode === "group");
       clearFeedback();
     }
 
@@ -1526,66 +1307,55 @@ B组</textarea>
       setFeedback(text("appliedPreset"), "success");
     }
 
+    function readNumberConfig(seedText) {
+      const min = Number(els.min.value);
+      const max = Number(els.max.value);
+      const decimals = state.numberType === "decimal" ? Number(els.decimals.value) : 0;
+      if (!Number.isFinite(min) || !Number.isFinite(max)) throw new Error(text("errRangeNumbers"));
+      if (min > max) throw new Error(text("errMinMax"));
+      if (!Number.isInteger(decimals) || decimals < 0 || decimals > 10) throw new Error(text("errDecimals"));
+      return {
+        numberType: state.numberType,
+        min,
+        max,
+        decimals,
+        unique: els.unique.checked,
+        seed: seedText,
+        random: createRandom(seedText)
+      };
+    }
+
     function readConfig() {
       const seedText = els.seed.value.trim();
       if (state.mode === "group") {
         const sampleCount = Number(els.sampleCount.value);
         const groups = els.groupNames.value.split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
-        if (!Number.isInteger(sampleCount) || sampleCount <= 0) {
-          throw new Error(text("errSampleCount"));
-        }
-        if (groups.length < 2) {
-          throw new Error(text("errGroups"));
-        }
-        return {
+        if (!Number.isInteger(sampleCount) || sampleCount <= 0) throw new Error(text("errSampleCount"));
+        if (groups.length < 2) throw new Error(text("errGroups"));
+        const config = {
+          ...readNumberConfig(seedText),
           mode: "group",
           sampleCount,
           groupMethod: els.groupMethod.value,
-          groups,
-          seed: seedText,
-          random: createRandom(seedText)
+          groups
         };
+        validateCapacity({ ...config, count: sampleCount });
+        return config;
       }
 
-      const min = Number(els.min.value);
-      const max = Number(els.max.value);
       const count = Number(els.count.value);
-      const decimals = state.numberType === "decimal" ? Number(els.decimals.value) : 0;
       const reference = Number(els.reference.value);
-
-      if (!Number.isFinite(min) || !Number.isFinite(max)) {
-        throw new Error(text("errRangeNumbers"));
-      }
-      if (min > max) {
-        throw new Error(text("errMinMax"));
-      }
-      if (!Number.isInteger(count) || count <= 0) {
-        throw new Error(text("errCount"));
-      }
-      if (!Number.isInteger(decimals) || decimals < 0 || decimals > 10) {
-        throw new Error(text("errDecimals"));
-      }
-      if (state.mode === "reference") {
-        if (!Number.isFinite(reference)) {
-          throw new Error(text("errReferenceNumber"));
-        }
-        if (reference < min || reference > max) {
-          throw new Error(text("errReferenceRange"));
-        }
-      }
-
+      if (!Number.isInteger(count) || count <= 0) throw new Error(text("errCount"));
       const config = {
+        ...readNumberConfig(seedText),
         mode: state.mode,
-        numberType: state.numberType,
-        min,
-        max,
         count,
-        decimals,
-        reference,
-        unique: els.unique.checked,
-        seed: seedText,
-        random: createRandom(seedText)
+        reference
       };
+      if (state.mode === "reference") {
+        if (!Number.isFinite(reference)) throw new Error(text("errReferenceNumber"));
+        if (reference < config.min || reference > config.max) throw new Error(text("errReferenceRange"));
+      }
       validateCapacity(config);
       return config;
     }
@@ -1594,21 +1364,15 @@ B组</textarea>
       if (config.numberType === "integer") {
         const minInt = Math.ceil(config.min);
         const maxInt = Math.floor(config.max);
-        if (minInt > maxInt) {
-          throw new Error(text("errNoInteger"));
-        }
-        if (config.unique && config.count > maxInt - minInt + 1) {
-          throw new Error(text("errUniqueInteger"));
-        }
+        if (minInt > maxInt) throw new Error(text("errNoInteger"));
+        if (config.unique && config.count > maxInt - minInt + 1) throw new Error(text("errUniqueInteger"));
       }
 
       if (config.numberType === "decimal" && config.unique) {
         const scale = 10 ** config.decimals;
         const minScaled = Math.ceil(config.min * scale);
         const maxScaled = Math.floor(config.max * scale);
-        if (minScaled > maxScaled || config.count > maxScaled - minScaled + 1) {
-          throw new Error(text("errUniqueDecimal"));
-        }
+        if (minScaled > maxScaled || config.count > maxScaled - minScaled + 1) throw new Error(text("errUniqueDecimal"));
       }
     }
 
@@ -1626,6 +1390,7 @@ B组</textarea>
         state.originalResults = cloneResults(generated);
         state.lastConfig = cloneConfig(activeConfig);
         state.metadata = buildMetadata(activeConfig);
+        state.tableModel = buildTableModel(generated, activeConfig);
         pushHistory();
         els.sort.value = "original";
         renderResults();
@@ -1647,17 +1412,13 @@ B组</textarea>
     function generateIntegers(config, count, min, max, exclude) {
       const minInt = Math.ceil(min);
       const maxInt = Math.floor(max);
-      if (minInt > maxInt && count > 0) {
-        throw new Error(text("errNoInteger"));
-      }
+      if (minInt > maxInt && count > 0) throw new Error(text("errNoInteger"));
       if (config.unique) {
         const pool = [];
         for (let value = minInt; value <= maxInt; value += 1) {
           if (!exclude.has(String(value))) pool.push(value);
         }
-        if (pool.length < count) {
-          throw new Error(text("errUniqueIntShort"));
-        }
+        if (pool.length < count) throw new Error(text("errUniqueIntShort"));
         shuffle(pool, config.random);
         return pool.slice(0, count);
       }
@@ -1668,18 +1429,14 @@ B组</textarea>
       const scale = 10 ** config.decimals;
       const minScaled = Math.ceil(min * scale);
       const maxScaled = Math.floor(max * scale);
-      if (minScaled > maxScaled && count > 0) {
-        throw new Error(text("errNoDecimal"));
-      }
+      if (minScaled > maxScaled && count > 0) throw new Error(text("errNoDecimal"));
       if (config.unique) {
         const pool = [];
         for (let value = minScaled; value <= maxScaled; value += 1) {
           const normalized = formatNumber(value / scale, config);
           if (!exclude.has(normalized)) pool.push(value / scale);
         }
-        if (pool.length < count) {
-          throw new Error(text("errUniqueDecimalShort"));
-        }
+        if (pool.length < count) throw new Error(text("errUniqueDecimalShort"));
         shuffle(pool, config.random);
         return pool.slice(0, count).map((value) => Number(formatNumber(value, config)));
       }
@@ -1696,9 +1453,7 @@ B组</textarea>
       lower.forEach((value) => used.add(formatNumber(value, config)));
       const upper = generateRange(config, counts.upper, upperMin(config), config.max, used);
       const results = [...lower, ...upper];
-      for (let i = 0; i < counts.equal; i += 1) {
-        results.push(normalizeValue(config.reference, config));
-      }
+      for (let i = 0; i < counts.equal; i += 1) results.push(normalizeValue(config.reference, config));
       shuffle(results, config.random);
       return results;
     }
@@ -1709,7 +1464,6 @@ B组</textarea>
       if (!canLower && !canUpper) return { lower: 0, upper: 0, equal: config.count };
       if (!canLower) return { lower: 0, upper: config.count, equal: 0 };
       if (!canUpper) return { lower: config.count, upper: 0, equal: 0 };
-
       const lowerExtra = config.random() < 0.5;
       const desired = {
         lower: Math.floor(config.count / 2) + (config.count % 2 && lowerExtra ? 1 : 0),
@@ -1717,7 +1471,6 @@ B组</textarea>
         equal: 0
       };
       if (!config.unique) return desired;
-
       const capacity = getReferenceCapacities(config);
       let lower = Math.min(desired.lower, capacity.lower);
       let upper = Math.min(desired.upper, capacity.upper);
@@ -1733,9 +1486,7 @@ B组</textarea>
         equal = 1;
         remaining -= 1;
       }
-      if (remaining > 0) {
-        throw new Error(text("errReferenceUnique"));
-      }
+      if (remaining > 0) throw new Error(text("errReferenceUnique"));
       return { lower, upper, equal };
     }
 
@@ -1785,25 +1536,20 @@ B组</textarea>
 
     function generateGroups(config) {
       const sampleIds = Array.from({ length: config.sampleCount }, (_, index) => index + 1);
-      const results = [];
+      const groups = [];
       if (config.groupMethod === "random") {
-        sampleIds.forEach((id) => {
-          const group = config.groups[randomInteger(0, config.groups.length - 1, config.random)];
-          results.push({ id, group });
+        sampleIds.forEach(() => groups.push(config.groups[randomInteger(0, config.groups.length - 1, config.random)]));
+      } else {
+        const base = Math.floor(config.sampleCount / config.groups.length);
+        const remainder = config.sampleCount % config.groups.length;
+        config.groups.forEach((group, index) => {
+          const size = base + (index < remainder ? 1 : 0);
+          for (let i = 0; i < size; i += 1) groups.push(group);
         });
-        return results;
+        shuffle(groups, config.random);
       }
-
-      const assignments = [];
-      const base = Math.floor(config.sampleCount / config.groups.length);
-      const remainder = config.sampleCount % config.groups.length;
-      config.groups.forEach((group, index) => {
-        const size = base + (index < remainder ? 1 : 0);
-        for (let i = 0; i < size; i += 1) assignments.push(group);
-      });
-      shuffle(assignments, config.random);
-      sampleIds.forEach((id, index) => results.push({ id, group: assignments[index] }));
-      return results;
+      const randomNumbers = generateRange(config, config.sampleCount, config.min, config.max);
+      return sampleIds.map((id, index) => ({ id, group: groups[index], randomNumber: randomNumbers[index] }));
     }
 
     function randomInteger(min, max, random) {
@@ -1839,7 +1585,7 @@ B组</textarea>
     }
 
     function formatNumber(value, config = state.lastConfig) {
-      if (!config || config.mode === "group") return String(value);
+      if (!config) return String(value);
       if (config.numberType === "integer") return String(value);
       return Number(value).toFixed(config.decimals);
     }
@@ -1849,6 +1595,7 @@ B组</textarea>
       state.results = els.sort.value === "original"
         ? state.originalResults.slice()
         : state.results.slice().sort((a, b) => els.sort.value === "asc" ? a - b : b - a);
+      state.tableModel = buildTableModel(state.results, state.lastConfig);
       renderResults();
     }
 
@@ -1862,23 +1609,25 @@ B组</textarea>
         return true;
       });
       state.originalResults = state.results.slice();
+      state.tableModel = buildTableModel(state.results, state.lastConfig);
       els.sort.value = "original";
       renderResults();
       setFeedback(text("deduped"), "success");
     }
 
-    async function copyAllResults() {
-      await copyText(resultLines().join("\n"));
-      setFeedback(text("copiedAll"), "success");
+    async function copyAllNumbers(direction) {
+      const separator = direction === "horizontal" ? "\t" : "\n";
+      await copyText(resultNumberLines().join(separator));
+      setFeedback(text(direction === "horizontal" ? "copiedAllHorizontal" : "copiedAllVertical"), "success");
     }
 
-    async function copyText(text) {
+    async function copyText(value) {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(value);
         return;
       }
       const textarea = document.createElement("textarea");
-      textarea.value = text;
+      textarea.value = value;
       textarea.style.position = "fixed";
       textarea.style.left = "-9999px";
       document.body.appendChild(textarea);
@@ -1889,39 +1638,62 @@ B组</textarea>
 
     function exportFile(type) {
       const content = type === "csv" ? csvContent() : txtContent();
-      const blob = new Blob([content], { type: type === "csv" ? "text/csv;charset=utf-8" : "text/plain;charset=utf-8" });
+      downloadText(`random-results-${dateStamp()}.${type}`, content, type === "csv" ? "text/csv;charset=utf-8" : "text/plain;charset=utf-8");
+      setFeedback(text("exported", { type: type.toUpperCase() }), "success");
+    }
+
+    function downloadText(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      downloadBlob(filename, blob);
+    }
+
+    function downloadBlob(filename, blob) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `random-results-${dateStamp()}.${type}`;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      setFeedback(text("exported", { type: type.toUpperCase() }), "success");
     }
 
     function txtContent() {
-      const metadata = metadataLines();
-      return [...metadata, "", ...resultLines()].join("\n");
+      return [...metadataLines(), "", ...resultLines()].join("\n");
     }
 
     function csvContent() {
       const format = els.csvFormat.value;
+      const resultRows = rowsForExport();
+      if (format === "single" && state.lastConfig.mode !== "group") return ["value", ...state.results.map((value) => csvEscape(formatNumber(value)))].join("\n");
+      const csvRows = [resultRows.columns.join(","), ...resultRows.rows.map((row) => row.map(csvEscape).join(","))];
+      return format === "metadata" ? [...metadataCsvRows(), "", ...csvRows].join("\n") : csvRows.join("\n");
+    }
+
+    function rowsForExport() {
+      if (!state.lastConfig) return { columns: [], rows: [] };
       if (state.lastConfig.mode === "group") {
-        const resultRows = ["sample_id,group", ...state.results.map((item) => `${item.id},${csvEscape(item.group)}`)];
-        return format === "metadata" ? [...metadataCsvRows(), "", ...resultRows].join("\n") : resultRows.join("\n");
+        return {
+          columns: ["sample_id", "group", "random_number"],
+          rows: state.results.map((item) => [sampleLabel(item.id), item.group, formatNumber(item.randomNumber, state.lastConfig)])
+        };
       }
-      const values = state.results.map((value) => formatNumber(value));
-      if (format === "single") return ["value", ...values.map(csvEscape)].join("\n");
-      const resultRows = ["index,value", ...values.map((value, index) => `${index + 1},${csvEscape(value)}`)];
-      return format === "metadata" ? [...metadataCsvRows(), "", ...resultRows].join("\n") : resultRows.join("\n");
+      return {
+        columns: ["index", "value"],
+        rows: state.results.map((value, index) => [index + 1, formatNumber(value)])
+      };
     }
 
     function resultLines() {
+      const resultRows = rowsForExport();
+      if (!resultRows.columns.length) return [];
+      return [resultRows.columns.join("\t"), ...resultRows.rows.map((row) => row.join("\t"))];
+    }
+
+    function resultNumberLines() {
       if (!state.lastConfig) return [];
       if (state.lastConfig.mode === "group") {
-        return state.results.map((item) => `${sampleLabel(item.id)}\t${item.group}`);
+        return state.results.map((item) => formatNumber(item.randomNumber, state.lastConfig));
       }
       return state.results.map((value) => formatNumber(value));
     }
@@ -1948,46 +1720,44 @@ B组</textarea>
     }
 
     function csvEscape(value) {
-      const text = String(value);
-      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+      const valueText = String(value);
+      return /[",\n]/.test(valueText) ? `"${valueText.replace(/"/g, '""')}"` : valueText;
     }
 
-    function renderResults() {
+    function renderResults(options = {}) {
       const hasResults = state.results.length > 0;
       els.emptyState.classList.toggle("hidden", hasResults);
       els.resultList.classList.toggle("hidden", !hasResults);
       els.resultList.innerHTML = "";
-
       state.results.forEach((value) => {
         const item = document.createElement("li");
         item.className = "result-item";
         const valueEl = document.createElement("span");
         valueEl.className = "result-value";
-        const line = state.lastConfig.mode === "group"
-          ? `${sampleLabel(value.id)}`
-          : formatNumber(value);
-        valueEl.textContent = line;
         if (state.lastConfig.mode === "group") {
-          const sub = document.createElement("span");
-          sub.className = "result-subvalue";
-          sub.textContent = value.group;
-          valueEl.appendChild(sub);
+          valueEl.textContent = sampleLabel(value.id);
+          const group = document.createElement("span");
+          group.className = "result-subvalue";
+          group.textContent = `${value.group} · ${formatNumber(value.randomNumber, state.lastConfig)}`;
+          valueEl.appendChild(group);
+        } else {
+          valueEl.textContent = formatNumber(value);
         }
-
         const copyButton = document.createElement("button");
         copyButton.className = "copy-one";
         copyButton.type = "button";
         copyButton.title = text("copyOne");
         copyButton.textContent = text("copyOne");
         copyButton.addEventListener("click", async () => {
-          await copyText(state.lastConfig.mode === "group" ? `${sampleLabel(value.id)}\t${value.group}` : formatNumber(value));
+          await copyText(state.lastConfig.mode === "group"
+            ? `${sampleLabel(value.id)}\t${value.group}\t${formatNumber(value.randomNumber, state.lastConfig)}`
+            : formatNumber(value));
           setFeedback(text("copiedOne"), "success");
         });
-
         item.append(valueEl, copyButton);
         els.resultList.appendChild(item);
       });
-
+      if (!options.preserveTable) renderTable();
       updateSummary();
       updateMetadata();
       renderHistory();
@@ -2001,10 +1771,11 @@ B组</textarea>
         results: cloneResults(state.results),
         originalResults: cloneResults(state.originalResults),
         lastConfig: cloneConfig(state.lastConfig),
-        metadata: { ...state.metadata }
+        metadata: { ...state.metadata },
+        tableModel: cloneTableModel(state.tableModel)
       };
       state.history.unshift(snapshot);
-      state.history = state.history.slice(0, 10);
+      state.history = state.history.slice(0, 100);
     }
 
     function restoreHistory(index) {
@@ -2014,11 +1785,14 @@ B组</textarea>
       state.originalResults = cloneResults(snapshot.originalResults);
       state.lastConfig = cloneConfig(snapshot.lastConfig);
       state.metadata = { ...snapshot.metadata };
+      state.tableModel = cloneTableModel(snapshot.tableModel || buildTableModel(state.results, state.lastConfig));
       els.sort.value = "original";
-      renderResults();
+      renderResults({ preserveTable: true });
+      renderTable();
       setFeedback(text("restoredHistory"), "success");
       els.statusPill.textContent = `${text("restored")} ${state.results.length} ${text("itemUnit")}`;
       els.regenerate.disabled = false;
+      setHistoryMenu(false);
     }
 
     function clearHistory() {
@@ -2038,11 +1812,9 @@ B组</textarea>
         els.historyList.appendChild(empty);
         return;
       }
-
       state.history.forEach((entry, index) => {
         const item = document.createElement("div");
         item.className = "history-item";
-
         const detail = document.createElement("div");
         const title = document.createElement("span");
         title.className = "history-title";
@@ -2051,23 +1823,20 @@ B组</textarea>
         meta.className = "history-meta";
         meta.textContent = `${entry.metadata.time} · Seed: ${entry.metadata.seed || text("unset")}`;
         detail.append(title, meta);
-
         const button = document.createElement("button");
         button.className = "btn btn-secondary btn-small";
         button.type = "button";
         button.innerHTML = `<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg>${text("view")}`;
         button.addEventListener("click", () => restoreHistory(index));
-
         item.append(detail, button);
         els.historyList.appendChild(item);
       });
     }
 
     function updateSummary() {
-      const values = state.lastConfig && state.lastConfig.mode !== "group" ? state.results : [];
+      const values = numericValuesForStats();
       els.summaryCount.textContent = state.results.length;
       els.summaryMode.textContent = state.lastConfig ? modeName(state.lastConfig) : "-";
-
       if (!values.length) {
         els.summaryMin.textContent = "-";
         els.summaryMax.textContent = "-";
@@ -2077,17 +1846,20 @@ B组</textarea>
         els.summaryQuartiles.textContent = state.lastConfig && state.lastConfig.mode === "group" ? groupSummary(state.results) : "-";
       } else {
         const stats = calcStats(values);
-        els.summaryMin.textContent = formatNumber(stats.min);
-        els.summaryMax.textContent = formatNumber(stats.max);
+        els.summaryMin.textContent = formatStat(stats.min);
+        els.summaryMax.textContent = formatStat(stats.max);
         els.summaryMean.textContent = formatStat(stats.mean);
         els.summaryMedian.textContent = formatStat(stats.median);
         els.summaryStd.textContent = formatStat(stats.std);
         els.summaryQuartiles.textContent = `${formatStat(stats.q1)} / ${formatStat(stats.q3)}`;
       }
+      if (state.lastConfig) els.resultSubtitle.textContent = state.metadata.configText;
+    }
 
-      if (state.lastConfig) {
-        els.resultSubtitle.textContent = state.metadata.configText;
-      }
+    function numericValuesForStats() {
+      if (!state.lastConfig) return [];
+      if (state.lastConfig.mode === "group") return state.results.map((item) => item.randomNumber);
+      return state.results;
     }
 
     function updateMetadata() {
@@ -2106,9 +1878,339 @@ B组</textarea>
       const numeric = hasResults && state.lastConfig.mode !== "group";
       els.sort.disabled = !numeric;
       els.dedupe.disabled = !numeric;
-      els.copyAll.disabled = !hasResults;
+      els.copyAllVertical.disabled = !hasResults;
+      els.copyAllHorizontal.disabled = !hasResults;
       els.exportTxt.disabled = !hasResults;
       els.exportCsv.disabled = !hasResults;
+      const hasTable = state.tableModel.rows.length > 0;
+      [els.transpose, els.copyTable, els.resetTable, els.exportExcelTable].forEach((button) => {
+        button.disabled = !hasTable;
+      });
+    }
+
+    function buildTableModel(results, config) {
+      if (!config || !results.length) return { columns: [], rows: [], transposed: false };
+      if (config.mode === "group") {
+        return {
+          columns: ["sample_id", "group", "random_number"],
+          rows: results.map((item) => [sampleLabel(item.id), item.group, formatNumber(item.randomNumber, config)]),
+          transposed: false
+        };
+      }
+      return {
+        columns: ["index", "value"],
+        rows: results.map((value, index) => [String(index + 1), formatNumber(value, config)]),
+        transposed: false
+      };
+    }
+
+    function renderTable() {
+      const model = state.tableModel;
+      const hasTable = model.rows.length > 0;
+      els.tableBox.classList.toggle("hidden", !hasTable);
+      els.tableWrap.innerHTML = "";
+      if (!hasTable) {
+        updateActionState(state.results.length > 0);
+        return;
+      }
+      const display = displayTable();
+      const table = document.createElement("table");
+      table.className = "preview-table";
+      const thead = document.createElement("thead");
+      if (display.columns.length) {
+        const headerRow = document.createElement("tr");
+        display.columns.forEach((column, colIndex) => {
+          const th = document.createElement("th");
+          th.textContent = column;
+          if (!state.tableModel.transposed) {
+            th.contentEditable = "true";
+            th.dataset.col = colIndex;
+            th.addEventListener("input", () => updateTableHeader(colIndex, th.textContent));
+          }
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+      }
+      const tbody = document.createElement("tbody");
+      display.rows.forEach((row, rowIndex) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell, colIndex) => {
+          const td = document.createElement("td");
+          td.contentEditable = "true";
+          td.textContent = cell;
+          td.dataset.row = rowIndex;
+          td.dataset.col = colIndex;
+          td.addEventListener("input", () => updateTableCell(rowIndex, colIndex, td.textContent));
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      if (display.columns.length) table.appendChild(thead);
+      table.appendChild(tbody);
+      els.tableWrap.appendChild(table);
+      updateActionState(state.results.length > 0);
+    }
+
+    function displayTable() {
+      const model = state.tableModel;
+      if (!model.transposed) return { columns: model.columns.slice(), rows: model.rows.map((row) => row.slice()) };
+      const source = [model.columns, ...model.rows];
+      const maxCols = Math.max(...source.map((row) => row.length));
+      const rows = [];
+      for (let col = 0; col < maxCols; col += 1) {
+        rows.push(source.map((row) => row[col] ?? ""));
+      }
+      return {
+        columns: [],
+        rows
+      };
+    }
+
+    function updateTableCell(rowIndex, colIndex, value) {
+      if (!state.tableModel.transposed) {
+        if (state.tableModel.rows[rowIndex]) state.tableModel.rows[rowIndex][colIndex] = value;
+        return;
+      }
+      if (colIndex === 0) {
+        state.tableModel.columns[rowIndex] = value;
+      } else if (state.tableModel.rows[colIndex - 1]) {
+        state.tableModel.rows[colIndex - 1][rowIndex] = value;
+      }
+    }
+
+    function updateTableHeader(colIndex, value) {
+      if (!state.tableModel.transposed) {
+        state.tableModel.columns[colIndex] = value;
+      }
+    }
+
+    function transposeTable() {
+      state.tableModel.transposed = !state.tableModel.transposed;
+      renderTable();
+    }
+
+    async function copyTable() {
+      await copyText(tableCopyText());
+      setFeedback(text("tableCopied"), "success");
+    }
+
+    function exportExcelTable() {
+      downloadBlob(
+        `table-preview-${dateStamp()}.xlsx`,
+        tableExcelWorkbookBlob()
+      );
+      setFeedback(text("exported", { type: "Excel" }), "success");
+    }
+
+    function resetTablePreview() {
+      state.tableModel = buildTableModel(state.results, state.lastConfig);
+      renderTable();
+      setFeedback(text("tableReset"), "success");
+    }
+
+    function tableCopyText() {
+      const display = displayTable();
+      const lines = display.columns.length ? [display.columns.join("\t")] : [];
+      return [...lines, ...display.rows.map((row) => row.join("\t"))].join("\n");
+    }
+
+    function tableExcelWorkbookBlob() {
+      return new Blob([createZip(xlsxFiles())], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      });
+    }
+
+    function xlsxFiles() {
+      return [
+        {
+          name: "[Content_Types].xml",
+          content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+</Types>`
+        },
+        {
+          name: "_rels/.rels",
+          content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`
+        },
+        {
+          name: "xl/workbook.xml",
+          content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheets>
+    <sheet name="Table Preview" sheetId="1" r:id="rId1"/>
+  </sheets>
+</workbook>`
+        },
+        {
+          name: "xl/_rels/workbook.xml.rels",
+          content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+</Relationships>`
+        },
+        {
+          name: "xl/worksheets/sheet1.xml",
+          content: worksheetXml()
+        }
+      ];
+    }
+
+    function worksheetXml() {
+      const display = displayTable();
+      const rows = display.columns.length ? [display.columns, ...display.rows] : display.rows;
+      const sheetRows = rows.map((row, rowIndex) => {
+        const cells = row.map((cell, colIndex) => {
+          const ref = `${columnName(colIndex + 1)}${rowIndex + 1}`;
+          return `<c r="${ref}" t="inlineStr"><is><t>${escapeXml(cell)}</t></is></c>`;
+        }).join("");
+        return `<row r="${rowIndex + 1}">${cells}</row>`;
+      }).join("");
+      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <sheetData>${sheetRows}</sheetData>
+</worksheet>`;
+    }
+
+    function columnName(index) {
+      let name = "";
+      let current = index;
+      while (current > 0) {
+        current -= 1;
+        name = String.fromCharCode(65 + (current % 26)) + name;
+        current = Math.floor(current / 26);
+      }
+      return name;
+    }
+
+    function escapeXml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function createZip(files) {
+      const encoder = new TextEncoder();
+      const localParts = [];
+      const centralParts = [];
+      let offset = 0;
+      files.forEach((file) => {
+        const nameBytes = encoder.encode(file.name);
+        const data = encoder.encode(file.content);
+        const crc = crc32(data);
+        const timeDate = dosTimeDate(new Date());
+        const localHeader = zipLocalHeader(nameBytes, data, crc, timeDate);
+        localParts.push(localHeader, data);
+        centralParts.push(zipCentralHeader(nameBytes, data, crc, timeDate, offset));
+        offset += localHeader.length + data.length;
+      });
+      const centralSize = centralParts.reduce((total, part) => total + part.length, 0);
+      const endRecord = zipEndRecord(files.length, centralSize, offset);
+      return concatBytes([...localParts, ...centralParts, endRecord]);
+    }
+
+    function zipLocalHeader(nameBytes, data, crc, timeDate) {
+      const header = new Uint8Array(30 + nameBytes.length);
+      writeUint32(header, 0, 0x04034b50);
+      writeUint16(header, 4, 20);
+      writeUint16(header, 6, 0);
+      writeUint16(header, 8, 0);
+      writeUint16(header, 10, timeDate.time);
+      writeUint16(header, 12, timeDate.date);
+      writeUint32(header, 14, crc);
+      writeUint32(header, 18, data.length);
+      writeUint32(header, 22, data.length);
+      writeUint16(header, 26, nameBytes.length);
+      writeUint16(header, 28, 0);
+      header.set(nameBytes, 30);
+      return header;
+    }
+
+    function zipCentralHeader(nameBytes, data, crc, timeDate, offset) {
+      const header = new Uint8Array(46 + nameBytes.length);
+      writeUint32(header, 0, 0x02014b50);
+      writeUint16(header, 4, 20);
+      writeUint16(header, 6, 20);
+      writeUint16(header, 8, 0);
+      writeUint16(header, 10, 0);
+      writeUint16(header, 12, timeDate.time);
+      writeUint16(header, 14, timeDate.date);
+      writeUint32(header, 16, crc);
+      writeUint32(header, 20, data.length);
+      writeUint32(header, 24, data.length);
+      writeUint16(header, 28, nameBytes.length);
+      writeUint16(header, 30, 0);
+      writeUint16(header, 32, 0);
+      writeUint16(header, 34, 0);
+      writeUint16(header, 36, 0);
+      writeUint32(header, 38, 0);
+      writeUint32(header, 42, offset);
+      header.set(nameBytes, 46);
+      return header;
+    }
+
+    function zipEndRecord(fileCount, centralSize, centralOffset) {
+      const record = new Uint8Array(22);
+      writeUint32(record, 0, 0x06054b50);
+      writeUint16(record, 4, 0);
+      writeUint16(record, 6, 0);
+      writeUint16(record, 8, fileCount);
+      writeUint16(record, 10, fileCount);
+      writeUint32(record, 12, centralSize);
+      writeUint32(record, 16, centralOffset);
+      writeUint16(record, 20, 0);
+      return record;
+    }
+
+    function concatBytes(parts) {
+      const length = parts.reduce((total, part) => total + part.length, 0);
+      const result = new Uint8Array(length);
+      let offset = 0;
+      parts.forEach((part) => {
+        result.set(part, offset);
+        offset += part.length;
+      });
+      return result;
+    }
+
+    function writeUint16(bytes, offset, value) {
+      bytes[offset] = value & 0xff;
+      bytes[offset + 1] = (value >>> 8) & 0xff;
+    }
+
+    function writeUint32(bytes, offset, value) {
+      bytes[offset] = value & 0xff;
+      bytes[offset + 1] = (value >>> 8) & 0xff;
+      bytes[offset + 2] = (value >>> 16) & 0xff;
+      bytes[offset + 3] = (value >>> 24) & 0xff;
+    }
+
+    function dosTimeDate(date) {
+      return {
+        time: (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2),
+        date: ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()
+      };
+    }
+
+    function crc32(data) {
+      let crc = 0xffffffff;
+      for (let i = 0; i < data.length; i += 1) {
+        crc ^= data[i];
+        for (let bit = 0; bit < 8; bit += 1) {
+          crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+        }
+      }
+      return (crc ^ 0xffffffff) >>> 0;
     }
 
     function calcStats(values) {
@@ -2157,7 +2259,10 @@ B组</textarea>
           ? text("configGroup", {
               count: config.sampleCount,
               groups: config.groups.length,
-              method: config.groupMethod === "balanced" ? text("balanced") : text("random")
+              method: config.groupMethod === "balanced" ? text("balanced") : text("random"),
+              min: config.min,
+              max: config.max,
+              unique: config.unique ? text("uniqueConfig") : ""
             })
           : text("configRange", {
               type: config.numberType === "integer" ? text("textInteger") : text("textDecimal", { n: config.decimals }),
@@ -2187,6 +2292,14 @@ B组</textarea>
       const clone = { ...config };
       delete clone.random;
       return clone;
+    }
+
+    function cloneTableModel(model) {
+      return {
+        columns: model.columns.slice(),
+        rows: model.rows.map((row) => row.slice()),
+        transposed: model.transposed
+      };
     }
 
     function dateStamp() {
@@ -2222,6 +2335,7 @@ B组</textarea>
       state.originalResults = [];
       state.lastConfig = null;
       state.metadata = null;
+      state.tableModel = { columns: [], rows: [], transposed: false };
       els.sort.value = "original";
       els.regenerate.disabled = true;
       els.statusPill.textContent = text("waiting");
